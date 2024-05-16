@@ -1,23 +1,23 @@
 <template>
   <div class="graph">
     <div class="tabs">
-      <button class="tab" :class="{ active: activeTab === 'daily' }" @click="changeTab('daily')">Diário</button>
-      <button class="tab" :class="{ active: activeTab === 'monthly' }" @click="changeTab('monthly')">Mensal</button>
-      <button class="tab" :class="{ active: activeTab === 'annual' }" @click="changeTab('annual')">Anual</button>
+      <tab class="tab" :class="{ active: activeTab === 'daily' }" @click="changeTab('daily')">Diário</tab>
+      <tab class="tab" :class="{ active: activeTab === 'monthly' }" @click="changeTab('monthly')">Mensal</tab>
+      <tab class="tab" :class="{ active: activeTab === 'annual' }" @click="changeTab('annual')">Anual</tab>
     </div>
 
     <div v-if="activeTab === 'daily'">
-      <h2>Gráfico Diário de {{ this.$route.path }}</h2>
-      <Chart />
+      <h2 class="text"> Gráfico Diário de {{ this.$route.path }}</h2>
+      <Daily :datasetLabel="this.$route.path" :dataTable="dataTable" />
     </div>
 
     <div v-if="activeTab === 'monthly'">
-      <h2>Gráfico Mensal de {{ this.$route.path }}</h2>
+      <h2 class="text">Gráfico Mensal de {{ this.$route.path }}</h2>
       <!-- <Chart :data="monthlyChartData" /> -->
     </div>
 
     <div v-if="activeTab === 'annual'">
-      <h2>Gráfico Anual de {{ this.$route.path }}</h2>
+      <h2 class="text">Gráfico Anual de {{ this.$route.path }}</h2>
       <!-- <Chart :data="annualChartData" /> -->
     </div>
   </div>
@@ -25,16 +25,18 @@
 
 <script>
 import { defineComponent } from 'vue';
-import Chart from '../components/Chart.vue';
+import { dataTable } from '../assets/dataMock';
+import Daily from './Daily.vue';
 
 export default defineComponent({
   name: 'Graph',
   components: {
-    Chart
+    Daily
   },
   data() {
     return {
       activeTab: 'daily',
+      dataTable,
       tabText: {
         daily: 'Gráfico Diário',
         monthly: 'Gráfico Mensal',
@@ -45,12 +47,12 @@ export default defineComponent({
   methods: {
     changeTab(tab) {
       this.activeTab = tab;
-    }
+    },
   },
 });
 </script>
 
-<style scoped>
+<style>
 .graph {
   width: 100%;
   height: 100vh;
@@ -58,15 +60,33 @@ export default defineComponent({
 
 .tabs {
   display: flex;
-  justify-content: space-around;
 }
 
 .tab {
   padding: 10px 20px;
   cursor: pointer;
+  color: var(--text-primary-color);
+  margin: 0.5rem;
+  border-left: 2px solid transparent;
+  border-top: none;
+  box-shadow: 0 2px 5px 0 var(--primary-color);
+  background-color: var(--secondary-color);
+  border-radius: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tab:hover {
+  background-color: var(--primary-color);
+  color: var(--text-secondary-color);
 }
 
 .tab.active {
-  background-color: #ccc;
+  background-color: var(--primary-color);
+  color: var(--text-secondary-color);
+}
+
+
+.text {
+  color: var(--text-primary-color);
 }
 </style>

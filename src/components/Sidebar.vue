@@ -26,8 +26,8 @@ export default {
     left: 0;
     width: 150px;
     height: calc(100vh - 50px);
-    background-color: #333;
-    color: #fff;
+    background-color: var(--tertiary-color);
+    color: var(--text-secondary-color);
     overflow-y: auto;
 }
 
@@ -43,7 +43,7 @@ li {
 .btn-sidebar {
     display: block;
     padding: 10px;
-    color: #fff;
+    color: var(--text-secondary-color);
     text-decoration: none;
     transition: background-color 0.3s;
 }

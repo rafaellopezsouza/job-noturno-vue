@@ -4,18 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "chart.js": "^3.0.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "vue": "^3.4.21",
     "vue-router": "^4.0.13"
   },
   "devDependencies": {
+    "@types/node": "^20.12.12",
     "@vitejs/plugin-vue": "^5.0.4",
-    "typescript": "^5.2.2",
+    "typescript": "^5.4.5",
     "vite": "^5.2.0",
     "vue-tsc": "^2.0.6"
   }

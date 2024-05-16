@@ -24,7 +24,7 @@ export default {
     },
     data() {
         return {
-            pageTitle: 'Header',
+            pageTitle: 'Home',
             linkHome: "/",
             sidebarLinks: [
                 { text: 'gus', url: '/gus' },
