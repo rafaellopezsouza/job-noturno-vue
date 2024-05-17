@@ -3,17 +3,17 @@
     <TabView>
       <TabPanel v-for="tab in tabs" :key="tab.title" :header="tab.title">
         <div v-if="tab.content === 'daily'">
-          <h2 class="text"> Gráfico Diário de {{ this.$route.path }}</h2>
-          <Daily :datasetLabel="this.$route.path" :dataTable="dataTable" />
+          <h2 class="text"> Gráfico Diário de {{ $route.path }}</h2>
+          <Daily :datasetLabel="$route.path" :dataTable="dataTable" />
         </div>
 
         <div v-if="tab.content === 'monthly'">
-          <h2 class="text">Gráfico Mensal de {{ this.$route.path }}</h2>
+          <h2 class="text">Gráfico Mensal de {{ $route.path }}</h2>
           <!-- <Chart :data="monthlyChartData" /> -->
         </div>
 
         <div v-if="tab.content === 'annual'">
-          <h2 class="text">Gráfico Anual de {{ this.$route.path }}</h2>
+          <h2 class="text">Gráfico Anual de {{ $route.path }}</h2>
           <!-- <Chart :data="annualChartData" /> -->
         </div>
       </TabPanel>

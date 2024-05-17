@@ -1,24 +1,37 @@
 <template>
   <div class="header">
-    <nav>
-      <router-link class="link-header" :to="linkHome">{{ title }}</router-link>
-    </nav>
+    <Menubar :model="items">
+      <router-link :to="item.link" v-for="item in items" :key="item.label" class="menubar-item">
+        {{ item.label }}
+      </router-link>
+    </Menubar>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
+import Menubar from 'primevue/menubar';
+
 export default {
   name: 'Header',
-  props: {
-    title: String,
-    linkHome: String
+  components: {
+    Menubar,
+  },
+  setup() {
+    const items = ref([
+      {
+        label: 'Home',
+        icon: 'pi pi-home',
+        link: "/"
+      }
+    ]);
+    return { items };
   }
-}
+};
 </script>
 
-<style>
+<style scoped>
 .header {
-  background-color: red;
   color: var(--text-secondary-color);
   position: fixed;
   top: 0;
@@ -26,24 +39,9 @@ export default {
   width: 100%;
   z-index: 999;
   height: 50px;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
 }
 
-.link-header {
-  display: block;
-  padding: 10px;
-  color: var(--text-secondary-color);
-  text-decoration: none;
-  transition: background-color 0.3s;
-  width: 70px;
-  background-color: var(--primary-color);
-  margin: 3px;
-  margin-left: 20px;
-  text-align: center;
-  border-radius: 5px;
-}
-
-.link-header:hover {
-  scale: 1.05;
+.menubar-item {
+  /* Adicione estilos para os itens do menubar, se necessário */
 }
 </style>

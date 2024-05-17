@@ -2,8 +2,8 @@
     <div class="sidebar">
         <ul>
             <li v-for="(link, index) in links" :key="index">
-                <router-link :to="link.url" class="btn-sidebar">
-                    {{ link.text.toUpperCase() }}
+                <router-link :to="link.url" class="link-sidebar">
+                    <Button class="btn-sidebar" :label="link.text.toUpperCase()" outlined />
                 </router-link>
             </li>
         </ul>
@@ -11,8 +11,13 @@
 </template>
 
 <script>
+import Button from 'primevue/button';
+
 export default {
     name: 'Sidebar',
+    components: {
+        Button
+    },
     props: {
         links: Array
     },
@@ -40,15 +45,19 @@ li {
     padding-left: 10px;
 }
 
-.btn-sidebar {
+.link-sidebar {
     display: block;
-    padding: 10px;
-    color: var(--text-secondary-color);
     text-decoration: none;
     transition: background-color 0.3s;
 }
 
-.btn-sidebar:hover {
+.btn-sidebar {
+    color: var(--text-secondary-color);
+    padding: 10px;
+    border: none;
+}
+
+.link-sidebar:hover {
     background-color: #555;
 }
 </style>
