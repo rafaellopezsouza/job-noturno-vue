@@ -1,83 +1,103 @@
 <template>
-    <div>
-        <canvas ref="chartCanvas" width="400" height="400"></canvas>
+    <div class="card flex justify-content-center">
+        <div class="chart-label">Total Scenarios: {{ props.totalScenarios }}</div>
+        <Chart type="pie" :data="chartData" :options="chartOptions" class="w-full md:w-30rem" />
     </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
-import Chart from 'chart.js/auto';
+<script setup>
+import { ref, onMounted, defineProps, watch } from "vue";
+import Chart from 'primevue/chart';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-export default defineComponent({
-    name: 'Daily',
-    props: {
-        totalPassed: Number,
-        totalFailed: Number,
-        totalSkipped: Number,
-        totalScenarios: Number
-    },
-    mounted() {
-        this.renderChart();
-    },
-    methods: {
-        renderChart() {
-            const chartData = {
-                labels: ['Passou', 'Falhou', 'Não executou'],
-                datasets: [{
-                    data: [
-                        this.totalPassed,
-                        this.totalFailed,
-                        this.totalSkipped,
-                    ],
-                    backgroundColor: [
-                        'green',
-                        'red',
-                        'orange',
-                    ],
-                    hoverOffset: 4
-                }],
-            };
+import { Chart as ChartJS, registerables } from 'chart.js';
 
-            const chartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: `Total Testes: ${this.totalScenarios}`,
-                        color: "blue",
-                        position: "top",
-                    },
-                    legend: {
-                        display: true,
-                        position: 'bottom'
-                    },
-                    datalabels: {
-                        anchor: 'center',
-                        font: {
-                            weight: 'bold',
-                        },
-                        color: 'white',
-                        formatter: (value, context) => {
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = Math.round((value / total) * 100);
-                            return ` ${value}\n(${percentage}%)`;
-                        }
-                    }
+ChartJS.register(...registerables, ChartDataLabels);
+
+const props = defineProps({
+    totalPassed: Number,
+    totalFailed: Number,
+    totalSkipped: Number,
+    totalScenarios: Number
+});
+
+const chartData = ref(null);
+const chartOptions = ref(null);
+
+const setChartData = () => {
+    const documentStyle = getComputedStyle(document.body);
+
+    return {
+        labels: ['PASSOU', 'FALHOU', 'PULOU'],
+        datasets: [
+            {
+                data: [props.totalPassed, props.totalFailed, props.totalSkipped],
+                backgroundColor: [
+                    documentStyle.getPropertyValue('--green-500'),
+                    documentStyle.getPropertyValue('--red-500'),
+                    documentStyle.getPropertyValue('--yellow-500'),
+                ],
+                hoverBackgroundColor: [
+                    documentStyle.getPropertyValue('--green-400'),
+                    documentStyle.getPropertyValue('--red-400'),
+                    documentStyle.getPropertyValue('--yellow-400'),
+                ]
+            }
+        ]
+    };
+};
+
+const setChartOptions = () => {
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue('--text-color');
+
+    return {
+        plugins: {
+            legend: {
+                labels: {
+                    usePointStyle: true,
+                    color: textColor,
                 }
-            };
-
-            const ctx = this.$refs.chartCanvas.getContext('2d');
-            if (ctx) {
-                new Chart(ctx, {
-                    type: 'pie',
-                    data: chartData,
-                    options: chartOptions,
-                    plugins: [ChartDataLabels]
-                });
+            },
+            datalabels: {
+                color: '#fff',
+                formatter: (value, context) => {
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const percentage = Math.round((value / total) * 100);
+                    return ` ${value}\n(${percentage}%)`;
+                },
+                font: {
+                    weight: 'bold',
+                    size: 12
+                }
             }
         }
-    }
-})
+    };
+};
+
+watch(
+    () => [props.totalPassed, props.totalFailed, props.totalSkipped],
+    () => {
+        chartData.value = setChartData();
+    },
+    { immediate: true }
+);
+
+onMounted(() => {
+    chartOptions.value = setChartOptions();
+});
 </script>
-<style></style>
+
+<style scoped>
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-label {
+    font-size: 16px;
+    margin-bottom: 1rem;
+    color: blue;
+}
+</style>

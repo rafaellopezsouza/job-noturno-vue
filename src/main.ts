@@ -1,6 +1,11 @@
 import { createApp } from "vue";
-import "./style.css";
 import App from "./App.vue";
 import router from "./router";
+import PrimeVue from "primevue/config";
 
-createApp(App).use(router).mount("#app");
+import 'primevue/resources/themes/aura-light-green/theme.css'
+import "./style.css";
+
+const app = createApp(App);
+app.use(PrimeVue).use(router);
+app.mount("#app");
