@@ -8,6 +8,13 @@
   --text-primary-color: black;
   --text-secondary-color: #fff;
   --text-tertiary-color: #fff;
+  --passed: #008743;
+  --skipped: #FDD000;
+  --pending: darkorange;
+  --failed: #CC1414;
+  --undefined: darkviolet;
+  --ambiguous: #005AB3;
+  --total: blue;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #ffffff;

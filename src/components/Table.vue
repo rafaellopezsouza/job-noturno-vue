@@ -22,11 +22,14 @@ export default defineComponent({
     },
     setup(props) {
         const columns = [
-            { field: 'dashboardName', header: 'Funcionalidade' },
+            { field: 'dashboardName', header: 'Dashboard' },
             { field: 'result.scenariosTotal', header: 'Total' },
             { field: 'result.scenariosPassed', header: 'Passou' },
             { field: 'result.scenariosFailed', header: 'Falhou' },
             { field: 'result.scenariosSkipped', header: 'Pulou' },
+            { field: 'result.scenariosPending', header: 'Pendente' },
+            { field: 'result.scenariosUndefined', header: 'Indefinido' },
+            { field: 'result.scenariosAmbiguous', header: 'Ambíguo' },
             { field: 'result.duration', header: 'Tempo' },
         ];
 
@@ -45,6 +48,15 @@ export default defineComponent({
         const totalSkipped = computed(() => {
             return props.dataTable.reduce((total, item) => total + item.result.scenariosSkipped, 0);
         });
+        const totalPending = computed(() => {
+            return props.dataTable.reduce((total, item) => total + item.result.scenariosPending, 0);
+        });
+        const totalUndefined = computed(() => {
+            return props.dataTable.reduce((total, item) => total + item.result.scenariosUndefined, 0);
+        });
+        const totalAmbiguous = computed(() => {
+            return props.dataTable.reduce((total, item) => total + item.result.scenariosAmbiguous, 0);
+        });
 
         const totalTime = computed(() => {
             const totalMilliseconds = props.dataTable.reduce((total, item) => total + item.result.duration, 0);
@@ -61,6 +73,9 @@ export default defineComponent({
                         scenariosPassed: totalPassed.value,
                         scenariosFailed: totalFailed.value,
                         scenariosSkipped: totalSkipped.value,
+                        scenariosPending: totalPending.value,
+                        scenariosUndefined: totalUndefined.value,
+                        scenariosAmbiguous: totalAmbiguous.value,
                         duration: totalTime.value,
                     },
                 },

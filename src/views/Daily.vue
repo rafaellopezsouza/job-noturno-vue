@@ -3,32 +3,30 @@
         <label for="calendar">Selecione uma data:</label>
         <Calendar v-model="date" dateFormat="dd/mm/yy" />
     </div>
-    <h4 class="title-graph">Titulo do Gráfico: {{ datasetLabel }}</h4>
+    <h4 class="title-graph">Titulo do Gráfico: {{ path }}</h4>
     <div class="grid-daily">
         <Table :dataTable="dataTable" />
-        <PieChart :totalScenarios="totalScenarios" :totalFailed="totalFailed" :totalPassed="totalPassed"
-            :totalSkipped="totalSkipped" />
+        <ChartPie :totalScenarios="totalScenarios" :totalFailed="totalFailed" :totalPassed="totalPassed"
+            :totalSkipped="totalSkipped" :totalPending="totalPending" :totalUndefined="totalUndefined"
+            :totaAmbiguous="totaAmbiguous" />
     </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-import PieChart from "../components/PieChart.vue"
+import { defineComponent, ref } from 'vue';
+import ChartPie from "../components/ChartPie.vue"
 import Table from "../components/Table.vue"
 import Calendar from 'primevue/calendar';
-
-
-import { ref } from "vue";
 
 export default defineComponent({
     name: 'Daily',
     components: {
-        PieChart,
+        ChartPie,
         Table,
         Calendar,
     },
     props: {
-        datasetLabel: String,
+        path: String,
         dataTable: Array,
     },
     setup() {
@@ -48,11 +46,24 @@ export default defineComponent({
         totalSkipped() {
             return this.dataTable.reduce((total, item) => total + item.result.scenariosSkipped, 0);
         },
+        totalPending() {
+            return this.dataTable.reduce((total, item) => total + item.result.scenariosPending, 0);
+        },
+        totalUndefined() {
+            return this.dataTable.reduce((total, item) => total + item.result.scenariosUndefined, 0);
+        },
+        totaAmbiguous() {
+            return this.dataTable.reduce((total, item) => total + item.result.scenariosAmbiguous, 0);
+        },
     },
 });
 </script>
 
 <style scoped>
+.select-data {
+    display: flex;
+}
+
 .input-calendar {
     display: flex;
     justify-content: center;
