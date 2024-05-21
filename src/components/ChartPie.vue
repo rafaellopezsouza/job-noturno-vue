@@ -1,7 +1,7 @@
 <template>
-    <div class="card">
+    <div class="chart-pie">
         <div class="chart-label">Total Scenarios: {{ props.totalScenarios }}</div>
-        <Chart type="pie" :data="chartData" :options="chartOptions" class="w-full md:w-30rem" />
+        <Chart type="pie" :data="chartData" :options="chartOptions" />
     </div>
 </template>
 
@@ -104,16 +104,17 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.card {
+.chart-pie {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    height: 20rem;
 }
 
 .chart-label {
     font-size: 16px;
-    margin-bottom: 1rem;
+    margin: 2rem;
     color: var(--total);
 }
 </style>

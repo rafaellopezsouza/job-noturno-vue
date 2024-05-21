@@ -1,83 +1,94 @@
 <template>
-    <div class="input-calendar">
-        <label for="calendar">Selecione uma data:</label>
-        <Calendar v-model="date" dateFormat="dd/mm/yy" />
+    <div class="filter-options">
+        <Calendar v-model="date" showIcon dateFormat="dd/mm/yy" inputId="selectDate" placeholder="Selecione uma data" />
+        <Dropdown id="select-dashboard" v-model="selectedDashboard" :options="selectDashboard" optionLabel="name"
+            placeholder="Selecione um Dashboard" />
     </div>
-    <h4 class="title-graph">Titulo do Gráfico: {{ path }}</h4>
+    <hr>
     <div class="grid-daily">
-        <Table :dataTable="dataTable" />
+        <!-- <Table :dataTable="dataTable" /> -->
         <ChartPie :totalScenarios="totalScenarios" :totalFailed="totalFailed" :totalPassed="totalPassed"
             :totalSkipped="totalSkipped" :totalPending="totalPending" :totalUndefined="totalUndefined"
-            :totaAmbiguous="totaAmbiguous" />
+            :totalAmbiguous="totalAmbiguous" />
     </div>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue';
-import ChartPie from "../components/ChartPie.vue"
-import Table from "../components/Table.vue"
+<script lang="ts">
+import { defineComponent, ref, computed, onMounted } from 'vue';
 import Calendar from 'primevue/calendar';
+import Dropdown from 'primevue/dropdown';
+import ChartPie from "../components/ChartPie.vue";
+import Table from "../components/Table.vue";
+import { dashboardName } from "../assets/dataMock";
+
+interface DashboardProps {
+    name: string;
+}
 
 export default defineComponent({
     name: 'Daily',
     components: {
-        ChartPie,
-        Table,
         Calendar,
+        Dropdown,
+        ChartPie,
+        Table
     },
     props: {
         path: String,
-        dataTable: Array,
+        dataTable: {
+            type: Array as () => Array<{ date: string, result: any }>,
+            required: true
+        }
     },
     setup() {
-        const date = ref(null);
-        return { date };
+        const date = ref<Date | null>(null);
+        const selectedDashboard = ref<DashboardProps | null>(null);
+        const selectDashboard = ref<DashboardProps[]>([]);
+
+        const fetchDashboardNames = async () => {
+            // Simulando a obtenção de dados da API
+            setTimeout(() => {
+                const dataFromAPI = dashboardName.map(name => ({ name }));
+                selectDashboard.value = [{ name: "Todos" }, ...dataFromAPI];
+            }, 1000);
+        };
+
+        onMounted(() => {
+            fetchDashboardNames();
+        });
+
+        return { date, selectedDashboard, selectDashboard };
     },
     computed: {
         totalScenarios() {
-            return this.dataTable.reduce((total, item) => total + item.result.scenariosTotal, 0);
+            return this.dataTable.reduce((total, item) => total + (item.result.scenariosTotal || 0), 0);
         },
         totalPassed() {
-            return this.dataTable.reduce((total, item) => total + item.result.scenariosPassed, 0);
+            return this.dataTable.reduce((total, item) => total + (item.result.scenariosPassed || 0), 0);
         },
         totalFailed() {
-            return this.dataTable.reduce((total, item) => total + item.result.scenariosFailed, 0);
+            return this.dataTable.reduce((total, item) => total + (item.result.scenariosFailed || 0), 0);
         },
         totalSkipped() {
-            return this.dataTable.reduce((total, item) => total + item.result.scenariosSkipped, 0);
+            return this.dataTable.reduce((total, item) => total + (item.result.scenariosSkipped || 0), 0);
         },
         totalPending() {
-            return this.dataTable.reduce((total, item) => total + item.result.scenariosPending, 0);
+            return this.dataTable.reduce((total, item) => total + (item.result.scenariosPending || 0), 0);
         },
         totalUndefined() {
-            return this.dataTable.reduce((total, item) => total + item.result.scenariosUndefined, 0);
+            return this.dataTable.reduce((total, item) => total + (item.result.scenariosUndefined || 0), 0);
         },
-        totaAmbiguous() {
-            return this.dataTable.reduce((total, item) => total + item.result.scenariosAmbiguous, 0);
-        },
-    },
+        totalAmbiguous() {
+            return this.dataTable.reduce((total, item) => total + (item.result.scenariosAmbiguous || 0), 0);
+        }
+    }
 });
 </script>
 
 <style scoped>
-.select-data {
-    display: flex;
-}
-
-.input-calendar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: var(--primary-color);
-}
-
-.input-calendar label {
-    margin-right: 20px;
-}
-
 .grid-daily {
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    gap: 20px;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
 }
 </style>

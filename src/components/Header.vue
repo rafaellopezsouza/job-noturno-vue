@@ -1,10 +1,8 @@
 <template>
   <div class="header">
-    <Menubar :model="items">
-      <router-link :to="item.link" v-for="item in items" :key="item.label">
-        {{ item.label }}
-      </router-link>
-    </Menubar>
+    <router-link class="link-home" :to="item.link" v-for="item in items" :key="item.label">
+      {{ item.label }}
+    </router-link>
   </div>
 </template>
 
@@ -32,12 +30,30 @@ export default {
 
 <style scoped>
 .header {
+  background: var(--primary-color);
   color: var(--text-secondary-color);
-  position: fixed;
+  padding: .5rem 0;
   top: 0;
   left: 0;
+  position: fixed;
   width: 100%;
-  z-index: 999;
-  height: 50px;
+  height: auto;
+  z-index: 60;
+  padding: 1.5rem 0;
+  min-height: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.link-home {
+  background-color: var(--primary-color);
+  color: var(--text-secondary-color);
+  text-decoration: none;
+  padding: 1rem 2rem 1rem 2rem;
+  margin-left: 3rem;
+}
+
+.link-home:hover {
+  border-radius: 2.5rem;
+  background-color: rgba(255, 255, 255, 0.25);
 }
 </style>

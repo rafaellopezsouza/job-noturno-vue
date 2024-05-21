@@ -1,7 +1,7 @@
 <template>
     <div class="filter-options">
-        <Dropdown id="select-month" class="dropdown-month" v-model="selectedMonth" :options="selectMonth"
-            optionLabel="month" placeholder="Selecione o mês" />
+        <Dropdown id="select-year" v-model="selectedYear" :options="selectYear" optionLabel="year"
+            placeholder="Selecione o ano" />
         <Dropdown id="select-dashboard" v-model="selectedDashboard" :options="selectDashboard" optionLabel="name"
             placeholder="Selecione um Dashboard" />
     </div>
@@ -15,20 +15,19 @@
 import { defineComponent, ref, computed, onMounted } from 'vue';
 import Dropdown from 'primevue/dropdown';
 import ChartLine from "../components/ChartLine.vue";
-import { dashboardName } from "../assets/dataMock"
-import { months } from "../assets/data"
+import { dashboardName } from "../assets/dataMock";
+import { years } from "../assets/data";
 
-interface Month {
-    month: string;
-    code: string;
+interface YearProps {
+    year: string;
 }
 
-interface Dashboard {
+interface DashboardProps {
     name: string;
 }
 
 export default defineComponent({
-    name: 'Monthly',
+    name: 'Annual',
     components: {
         Dropdown,
         ChartLine
@@ -36,23 +35,25 @@ export default defineComponent({
     props: {
         path: String,
         dataTable: {
-            type: Array as () => Array<{ date: string }>,
-            required: true,
-            default: () => []
-        },
-        selectMonth: {
-            type: Array as () => Month[],
-            required: true,
-            default: () => []
+            type: Array as () => Array<{ date: string, result: any }>,
+            required: true
         }
     },
     setup(props) {
-        const selectedMonth = ref<Month | null>(null);
-        const selectedDashboard = ref<Dashboard | null>(null);
+        const selectedYear = ref<YearProps | null>(null);
+        const selectedDashboard = ref<DashboardProps | null>(null);
 
-        const selectMonth = ref<Month[]>(months);
+        const selectYear = ref<YearProps[]>([]);
+        const selectDashboard = ref<DashboardProps[]>([]);
 
-        const selectDashboard = ref<Dashboard[]>([]);
+        const fetchYears = async () => {
+            // Simulando a obtenção de dados da API
+            setTimeout(() => {
+                const dataFromAPI = years.map(year => ({ year }));
+                selectYear.value = dataFromAPI;
+            }, 1000);
+        };
+
         const fetchDashboardNames = async () => {
             // Simulando a obtenção de dados da API
             setTimeout(() => {
@@ -64,7 +65,9 @@ export default defineComponent({
         const dataLabels = computed(() =>
             props.dataTable.map(data => new Date(data.date).getDate().toString().padStart(2, '0'))
         );
+
         onMounted(() => {
+            fetchYears();
             fetchDashboardNames();
         });
 
@@ -97,8 +100,8 @@ export default defineComponent({
         });
 
         return {
-            selectedMonth,
-            selectMonth,
+            selectedYear,
+            selectYear,
             dataLabels,
             selectedDashboard,
             selectDashboard,
@@ -113,5 +116,4 @@ export default defineComponent({
     },
 });
 </script>
-
 <style scoped></style>

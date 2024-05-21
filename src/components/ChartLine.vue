@@ -181,14 +181,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.chart-line {
-    width: 100vh;
-    height: 30rem;
-}
 
-.chart {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.chart-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20rem;
 }
 </style>

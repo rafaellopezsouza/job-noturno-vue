@@ -27,37 +27,32 @@ export default {
 <style>
 .sidebar {
     position: fixed;
-    top: 50px;
+    top: 4rem;
     left: 0;
-    width: 150px;
-    height: calc(100vh - 50px);
-    background-color: var(--tertiary-color);
+    width: 10rem;
+    height: 100vh;
+    background-color: var(--primary-color);
     color: var(--text-secondary-color);
     overflow-y: auto;
 }
 
 ul {
     list-style-type: none;
-    padding: 0;
-}
-
-li {
     padding-left: 10px;
-}
-
-.link-sidebar {
-    display: block;
-    text-decoration: none;
-    transition: background-color 0.3s;
 }
 
 .btn-sidebar {
     color: var(--text-secondary-color);
-    padding: 10px;
     border: none;
+    margin-left: 1rem;
+}
+
+.link-sidebar {
+    display: block;
+    transition: background-color 0.3s;
 }
 
 .link-sidebar:hover {
-    background-color: #555;
+    background-color: rgba(255, 255, 255, 0.25);
 }
 </style>
