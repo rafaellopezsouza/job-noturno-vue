@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="table">
         <DataTable :value="tableWithTotal" showGridlines>
             <Column v-for="col in columns" :key="col.field" :field="col.field" :header="col.header"></Column>
         </DataTable>
@@ -12,7 +12,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
 export default defineComponent({
-    name: 'Daily',
+    name: 'Table',
     props: {
         dataTable: Array,
     },
@@ -92,4 +92,8 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.table {
+    margin-top: 5rem;
+}
+</style>

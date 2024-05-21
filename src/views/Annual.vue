@@ -6,7 +6,7 @@
             placeholder="Selecione um Dashboard" />
     </div>
     <hr>
-    <div class="chart-line">
+    <div>
         <ChartLine :labels="dataLabels" />
     </div>
 </template>

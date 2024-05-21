@@ -5,11 +5,11 @@
             placeholder="Selecione um Dashboard" />
     </div>
     <hr>
-    <div class="grid-daily">
-        <!-- <Table :dataTable="dataTable" /> -->
+    <div>
         <ChartPie :totalScenarios="totalScenarios" :totalFailed="totalFailed" :totalPassed="totalPassed"
             :totalSkipped="totalSkipped" :totalPending="totalPending" :totalUndefined="totalUndefined"
             :totalAmbiguous="totalAmbiguous" />
+        <!-- <Table :dataTable="dataTable" /> -->
     </div>
 </template>
 
@@ -85,10 +85,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.grid-daily {
-    /* display: flex; */
-    align-items: center;
-    justify-content: center;
-}
-</style>
+<style scoped></style>

@@ -76,7 +76,8 @@ export default {
 <style scoped>
 .home {
     display: flex;
-    margin: 4rem;
+    margin-top: 1rem;
+    margin-left: 4rem;
     justify-items: center;
     align-items: center;
 }
@@ -92,7 +93,7 @@ export default {
 }
 
 .title {
-    margin-top: 4rem;
+    margin-top: 1rem;
     color: var(--text-primary-color);
     text-align: center;
 }
