@@ -1,25 +1,27 @@
 <template>
     <div class="home">
         <Header :linkHome="linkHome" :title="pageTitle" />
-        <Sidebar :links="sidebarLinks" />
-        <div class="content">
-            <div class="graph-view">
-                <h1 class="title">
-                    Relatório Execução Job Noturno
-                </h1>
-                <TabView>
-                    <TabPanel v-for="tab in tabs" :key="tab.title" :header="tab.title">
-                        <div v-if="tab.content === 'daily'">
-                            <Daily :path="$route.path" :dataTable="dataTable" />
-                        </div>
-                        <div v-if="tab.content === 'monthly'">
-                            <Monthly :path="$route.path" :dataTable="dataTable" />
-                        </div>
-                        <div v-if="tab.content === 'annual'">
-                            <Annual :path="$route.path" :dataTable="dataTable" />
-                        </div>
-                    </TabPanel>
-                </TabView>
+        <div class="main-content">
+            <Sidebar :links="sidebarLinks" />
+            <div class="content">
+                <div class="graph-view">
+                    <h1 class="title">
+                        Relatório Execução Job Noturno
+                    </h1>
+                    <TabView>
+                        <TabPanel v-for="tab in tabs" :key="tab.title" :header="tab.title">
+                            <div v-if="tab.content === 'daily'">
+                                <Daily :path="$route.path" :dataTable="dataTable" />
+                            </div>
+                            <div v-if="tab.content === 'monthly'">
+                                <Monthly :path="$route.path" :dataTable="dataTable" />
+                            </div>
+                            <div v-if="tab.content === 'annual'">
+                                <Annual :path="$route.path" :dataTable="dataTable" />
+                            </div>
+                        </TabPanel>
+                    </TabView>
+                </div>
             </div>
         </div>
     </div>
@@ -76,24 +78,24 @@ export default {
 <style scoped>
 .home {
     display: flex;
-    margin-top: 1rem;
-    margin-left: 4rem;
-    justify-items: center;
-    align-items: center;
+    flex-direction: column;
+    margin-top: 60px;
+    margin-left: 200px;
+}
+
+.main-content {
+    display: flex;
+    flex: 1;
 }
 
 .content {
-    margin-top: 60px;
-    margin-left: 160px;
-    width: calc(100% - 160px);
-    height: calc(100vh - 60px);
+    flex: 1;
     display: flex;
-    align-items: flex-start;
-    justify-content: center;
+    flex-direction: column;
 }
 
 .title {
-    margin-top: 1rem;
+    margin-top: 60px;
     color: var(--text-primary-color);
     text-align: center;
 }

@@ -3,9 +3,9 @@ import Home from '../views/Home.vue';
 
 const routes: Array<RouteRecordRaw> = [
     {
-        path: '/',
-        name: 'Home',
-        component: Home
+        path: '/:pathMatch(.*)*',
+        name: 'CatchAll',
+        component: Home,
     },
 ];
 

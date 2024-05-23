@@ -1,19 +1,20 @@
 <template>
-    <div class="chart">
-        <Chart type="line" :data="chartData" :options="chartOptions" class="chart-line" />
+    <div class="chart-line">
+        <Chart type="line" :data="chartData" :options="chartOptions" />
     </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted, defineProps } from 'vue';
+<script setup>
+import { ref, watch } from "vue";
 import Chart from 'primevue/chart';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Chart as ChartJS, registerables } from 'chart.js';
+import { labelsGraphs } from "../assets/data"
 
-ChartJS.register(...registerables, ChartDataLabels);
+
+ChartJS.register(...registerables);
 
 const props = defineProps({
-    labels: Array,
+    labels: { type: Array, required: true },
     totalPassed: { type: Number, default: 0 },
     totalFailed: { type: Number, default: 0 },
     totalSkipped: { type: Number, default: 0 },
@@ -23,169 +24,112 @@ const props = defineProps({
     totalAmbiguous: { type: Number, default: 0 },
 });
 
-const chartData = ref();
-const chartOptions = ref();
+const chartData = ref(setChartData());
+const chartOptions = ref(setChartOptions());
 
-const setChartData = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
+function setChartData() {
+    const documentStyle = getComputedStyle(document.body);
     const color = {
-        total: documentStyle.getPropertyValue('--blue-500'),
         passed: documentStyle.getPropertyValue('--passed'),
         failed: documentStyle.getPropertyValue('--failed'),
         skipped: documentStyle.getPropertyValue('--skipped'),
         pending: documentStyle.getPropertyValue('--pending'),
         undefined: documentStyle.getPropertyValue('--undefined'),
         ambiguous: documentStyle.getPropertyValue('--ambiguous'),
-    }
-    //Aguardar API buscar por data e Substituir o data com um map que virá da API
+    };
+
     return {
         labels: props.labels,
         datasets: [
             {
-                label: 'Total',
-                data: [65, 59, 80, 81, 56, 55, 40],
-                fill: false,
-                tension: 0.4,
-                backgroundColor: color.total,
-                borderColor: color.total,
-                color: color.total,
-                datalabels: {
-                    align: 'end',
-                    anchor: 'end',
-                    color: color.total,
-                }
-            },
-            {
-                label: 'Passou',
-                data: [28, 48, 40, 19, 86, 27, 90],
-                fill: false,
-                tension: 0.4,
-                backgroundColor: color.passed,
+                label: labelsGraphs.passed,
+                data: props.totalPassed,
                 borderColor: color.passed,
-                datalabels: {
-                    align: 'end',
-                    anchor: 'end',
-                    color: color.passed,
-                }
+                fill: false,
             },
             {
-                label: 'Falhou',
-                data: [8, 8, 0, 9, 6, 7, 0],
-                fill: false,
-                tension: 0.4,
-                backgroundColor: color.failed,
+                label: labelsGraphs.failed,
+                data: props.totalFailed,
                 borderColor: color.failed,
-                datalabels: {
-                    align: 'end',
-                    anchor: 'end',
-                    color: color.failed,
-                }
+                fill: false,
             },
             {
-                label: 'Não Executou',
-                data: [2, 4, 4, 1, 8, 2, 9],
-                fill: false,
-                tension: 0.4,
-                backgroundColor: color.skipped,
+                label: labelsGraphs.skipped,
+                data: props.totalSkipped,
                 borderColor: color.skipped,
-                datalabels: {
-                    align: 'end',
-                    anchor: 'end',
-                    color: color.skipped,
-                }
+                fill: false,
             },
             {
-                label: 'Pendente',
-                data: [2, 4, 4, 1, 8, 2, 9],
-                fill: false,
-                tension: 0.4,
-                backgroundColor: color.pending,
+                label: labelsGraphs.pending,
+                data: props.totalPending,
                 borderColor: color.pending,
-                datalabels: {
-                    align: 'end',
-                    anchor: 'end',
-                    color: color.pending,
-                }
+                fill: false,
             },
             {
-                label: 'Indefinido',
-                data: [2, 4, 4, 1, 8, 2, 9],
-                fill: false,
-                tension: 0.4,
-                backgroundColor: color.undefined,
+                label: labelsGraphs.undefined,
+                data: props.totalUndefined,
                 borderColor: color.undefined,
-                datalabels: {
-                    align: 'end',
-                    anchor: 'end',
-                    color: color.undefined,
-                }
+                fill: false,
             },
             {
-                label: 'AMBÍGUO',
-                data: [2, 4, 4, 1, 8, 2, 9],
-                fill: false,
-                tension: 0.4,
-                backgroundColor: color.ambiguous,
+                label: labelsGraphs.ambiguous,
+                data: props.totalAmbiguous,
                 borderColor: color.ambiguous,
-                datalabels: {
-                    align: 'end',
-                    anchor: 'end',
-                    color: color.ambiguous,
-                }
-            },
+                fill: false,
+            }
         ]
     };
-};
+}
 
-const setChartOptions = () => {
+function setChartOptions() {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-    const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
     return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
         plugins: {
             legend: {
                 labels: {
-                    color: textColor
+                    usePointStyle: true,
+                    color: textColor,
                 }
             }
         },
         scales: {
             x: {
                 ticks: {
-                    color: textColorSecondary
+                    color: textColor,
                 },
                 grid: {
-                    color: surfaceBorder
+                    color: 'rgba(255,255,255,0.2)',
                 }
             },
             y: {
                 ticks: {
-                    color: textColorSecondary
+                    color: textColor,
                 },
                 grid: {
-                    color: surfaceBorder
+                    color: 'rgba(255,255,255,0.2)',
                 }
             }
         }
     };
-};
+}
 
-onMounted(() => {
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
-});
+watch(
+    () => [props.totalPassed, props.totalFailed, props.totalSkipped, props.totalPending, props.totalUndefined, props.totalAmbiguous, props.labels],
+    () => {
+        chartData.value = setChartData();
+    },
+    { immediate: true }
+);
 </script>
 
 <style scoped>
-
 .chart-line {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 20rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 20rem;
 }
 </style>

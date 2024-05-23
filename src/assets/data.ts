@@ -20,3 +20,14 @@ export const months = [
 ];
 
 export const years = ["2021", "2022", "2023", "2024"];
+
+export const labelsGraphs = {
+  passed: "Passou",
+  failed: "Falhou",
+  skipped: "Não Executou",
+  pending: "Pendente",
+  undefined: "Indefinido",
+  ambiguous: "Ambíguo",
+  total: "Total",
+  time: "Tempo",
+};

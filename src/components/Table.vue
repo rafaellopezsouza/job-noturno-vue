@@ -10,6 +10,7 @@
 import { defineComponent, ref, computed } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import { labelsGraphs } from "../assets/data"
 
 export default defineComponent({
     name: 'Table',
@@ -22,15 +23,15 @@ export default defineComponent({
     },
     setup(props) {
         const columns = [
-            { field: 'dashboardName', header: 'Dashboard' },
-            { field: 'result.scenariosTotal', header: 'Total' },
-            { field: 'result.scenariosPassed', header: 'Passou' },
-            { field: 'result.scenariosFailed', header: 'Falhou' },
-            { field: 'result.scenariosSkipped', header: 'Pulou' },
-            { field: 'result.scenariosPending', header: 'Pendente' },
-            { field: 'result.scenariosUndefined', header: 'Indefinido' },
-            { field: 'result.scenariosAmbiguous', header: 'Ambíguo' },
-            { field: 'result.duration', header: 'Tempo' },
+            { field: 'dashboardName', header: 'Funcionalidade' },
+            { field: 'result.scenariosTotal', header: labelsGraphs.total },
+            { field: 'result.scenariosPassed', header: labelsGraphs.passed },
+            { field: 'result.scenariosFailed', header: labelsGraphs.failed },
+            { field: 'result.scenariosSkipped', header: labelsGraphs.skipped },
+            { field: 'result.scenariosPending', header: labelsGraphs.pending },
+            { field: 'result.scenariosUndefined', header: labelsGraphs.undefined },
+            { field: 'result.scenariosAmbiguous', header: labelsGraphs.ambiguous },
+            { field: 'result.duration', header: labelsGraphs.time },
         ];
 
         const totalScenarios = computed(() => {

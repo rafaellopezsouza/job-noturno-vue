@@ -1,15 +1,16 @@
 <template>
     <div class="chart-pie">
-        <div class="chart-label">Total Scenarios: {{ props.totalScenarios }}</div>
+        <div class="chart-label">Total Scenarios: {{ totalScenarios }}</div>
         <Chart type="pie" :data="chartData" :options="chartOptions" />
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, defineProps, watch } from "vue";
+import { ref, watch } from "vue";
 import Chart from 'primevue/chart';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Chart as ChartJS, registerables } from 'chart.js';
+import { labelsGraphs } from "../assets/data"
 
 ChartJS.register(...registerables, ChartDataLabels);
 
@@ -23,11 +24,10 @@ const props = defineProps({
     totalAmbiguous: { type: Number, default: 0 },
 });
 
+const chartData = ref(setChartData());
+const chartOptions = ref(setChartOptions());
 
-const chartData = ref(null);
-const chartOptions = ref(null);
-
-const setChartData = () => {
+function setChartData() {
     const documentStyle = getComputedStyle(document.body);
     const color = {
         total: documentStyle.getPropertyValue('--blue-500'),
@@ -37,10 +37,10 @@ const setChartData = () => {
         pending: documentStyle.getPropertyValue('--pending'),
         undefined: documentStyle.getPropertyValue('--undefined'),
         ambiguous: documentStyle.getPropertyValue('--ambiguous'),
-    }
+    };
 
     return {
-        labels: ['PASSOU', 'FALHOU', 'NÃO EXECUTOU', "PENDENTE", "INDEFINIDO", "AMBÍGUO"],
+        labels: [labelsGraphs.passed, labelsGraphs.failed, labelsGraphs.skipped, labelsGraphs.pending, labelsGraphs.undefined, labelsGraphs.ambiguous],
         datasets: [
             {
                 data: [props.totalPassed, props.totalFailed, props.totalSkipped, props.totalPending, props.totalUndefined, props.totalAmbiguous],
@@ -56,9 +56,9 @@ const setChartData = () => {
             }
         ]
     };
-};
+}
 
-const setChartOptions = () => {
+function setChartOptions() {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
 
@@ -88,7 +88,7 @@ const setChartOptions = () => {
             }
         }
     };
-};
+}
 
 watch(
     () => [props.totalPassed, props.totalFailed, props.totalSkipped, props.totalPending, props.totalUndefined, props.totalAmbiguous],
@@ -97,10 +97,6 @@ watch(
     },
     { immediate: true }
 );
-
-onMounted(() => {
-    chartOptions.value = setChartOptions();
-});
 </script>
 
 <style scoped>
