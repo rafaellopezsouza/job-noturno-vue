@@ -1,16 +1,20 @@
 <template>
   <div class="header">
     <router-link class="link-home" :to="item.link" v-for="item in items" :key="item.label">
-      {{ item.label }}
+      Job Noturno {{ $route.path != "/" ? `(${$route.path.replace("/", "").toUpperCase()})` : "" }}
     </router-link>
+    <div class="breadcrumb pagePadding botMargin">
+      <p><i class="pi pi-home breadcrumbActive"></i></p>
+      <p class="breadcrumbActive">Projetos</p>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, defineComponent } from "vue";
 import Menubar from 'primevue/menubar';
 
-export default {
+export default defineComponent({
   name: 'Header',
   components: {
     Menubar,
@@ -25,7 +29,7 @@ export default {
     ]);
     return { items };
   }
-};
+});
 </script>
 
 <style scoped>
@@ -55,5 +59,32 @@ export default {
 .link-home:hover {
   border-radius: 2.5rem;
   background-color: rgba(255, 255, 255, 0.25);
+}
+
+.breadcrumb {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  background: #D9F5DE;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  z-index: 9;
+  box-shadow: 0px 1px 15px -3px rgb(0 0 0 / 0%);
+}
+
+.breadcrumbActive {
+  font-size: 18px;
+  white-space: nowrap;
+  color: #575757;
+  cursor: default;
+  padding: 0px 4px;
+}
+
+.breadcrumbNotActive {
+  font-size: 18px;
+  white-space: nowrap;
+  padding: 0px 4px;
 }
 </style>

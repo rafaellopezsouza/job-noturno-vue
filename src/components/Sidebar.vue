@@ -26,8 +26,9 @@ export default {
 
 <style>
 .sidebar {
-    position: fixed;
-    top: 4rem;
+    position: relative;
+    padding-left: 0;
+    margin-left: 0;
     left: 0;
     width: 10rem;
     height: 100vh;

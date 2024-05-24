@@ -1,17 +1,15 @@
 import axios from "axios";
-import { dashboardName } from "../assets/dataMock";
-
-interface getByDateProps extends getByDashboardProps {
+interface getByDateProps extends getByFeatureProps {
   startDate: string;
   endDate: string;
 }
 
-export interface getByDashboardProps {
+export interface getByFeatureProps {
   project: string;
 }
 
-interface getByDashboardAndDateProps extends getByDateProps {
-  dashboardName: string;
+interface getByFeatureAndDateProps extends getByDateProps {
+  featureName: string;
 }
 const baseUrl = "https://devcukes.seg-social.pt/rest/dashboards";
 
@@ -26,19 +24,19 @@ export function getByDate({ project, startDate, endDate }: getByDateProps) {
   return getApi(`${baseUrl + project.toUpperCase()}/${startDate}/${endDate}`);
 }
 
-export async function getByDashboard({ project }: getByDashboardProps) {
+export async function getFeatures({ project }: getByFeatureProps) {
   return getApi(`${baseUrl + project.toUpperCase()}/dashboardName`);
 }
 
-export async function getByDashboardAndDate({
+export async function getByFeatureAndDate({
   project,
-  dashboardName,
+  featureName,
   startDate,
   endDate,
-}: getByDashboardAndDateProps) {
+}: getByFeatureAndDateProps) {
   return getApi(
     `${
       baseUrl + project.toUpperCase()
-    }/${dashboardName}/${startDate}/${endDate}`
+    }/${featureName}/${startDate}/${endDate}`
   );
 }

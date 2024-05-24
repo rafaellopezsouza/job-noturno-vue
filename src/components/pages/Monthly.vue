@@ -3,8 +3,8 @@
         <div class="filter-options">
             <Dropdown id="select-month" class="dropdown-month" v-model="selectedMonth" :options="selectMonth"
                 optionLabel="month" placeholder="Selecione o mês" />
-            <Dropdown id="select-dashboard" v-model="selectedDashboard" :options="selectDashboard" optionLabel="name"
-                placeholder="Selecione um Dashboard" />
+            <Dropdown id="select-dashboard" v-model="selectedFeature" :options="selectFeature" optionLabel="name"
+                placeholder="Selecione uma Funcionalidade" />
         </div>
         <hr>
         <div class="chart-line"  v-if="scenariosTotal > 0">
@@ -18,16 +18,16 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch, computed } from 'vue';
 import Dropdown from 'primevue/dropdown';
-import ChartLine from "../components/ChartLine.vue";
-import { months } from "../assets/data";
-import { getByDashboard, getByDashboardAndDate, getByDate } from "../services/api";
+import ChartLine from "../ChartLine.vue";
+import { months } from "../../assets/data";
+import { getFeatures, getByFeatureAndDate, getByDate } from "../../services/api";
 
 interface Month {
     month: string;
     code: string;
 }
 
-interface DashboardProps {
+interface FeatureProps {
     name: string;
 }
 
@@ -59,10 +59,10 @@ export default defineComponent({
     },
     setup(props) {
         const selectedMonth = ref<Month | null>(null);
-        const selectedDashboard = ref<DashboardProps | null>(null);
+        const selectedFeature = ref<FeatureProps | null>(null);
 
         const selectMonth = ref<Month[]>(months);
-        const selectDashboard = ref<DashboardProps[]>([]);
+        const selectFeature = ref<FeatureProps[]>([]);
 
         const passedTotal = ref<number>(0);
         const failedTotal = ref<number>(0);
@@ -72,59 +72,59 @@ export default defineComponent({
         const ambiguousTotal = ref<number>(0);
         const scenariosTotal = ref<number>(0);
 
-        const fetchDashboardNames = async () => {
+        const fetchFeatureNames = async () => {
             if (props.path !== undefined) {
-                const dashboardData = await getByDashboard({ project: props.path });
-                const dataFromAPI = dashboardData.map((name: string) => ({ name }));
-                selectDashboard.value = [{ name: "Todos" }, ...dataFromAPI];
+                const FeatureData = await getFeatures({ project: props.path });
+                const dataFromAPI = FeatureData.map((name: string) => ({ name }));
+                selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
             }
         };
 
-        watch([selectedMonth, selectedDashboard], async ([month, dashboard]) => {
-            if (month && dashboard) {
-                fetchData(month.code, dashboard);
+        watch([selectedMonth, selectedFeature], async ([month, feature]) => {
+            if (month && feature) {
+                fetchData(month.code, feature);
             }
         });
 
         onMounted(() => {
-            fetchDashboardNames();
+            fetchFeatureNames();
         });
 
-        const fetchData = async (month: string, dashboard: DashboardProps) => {
+        const fetchData = async (month: string, feature: FeatureProps) => {
             try {
                 const startDate = `${new Date().getFullYear()}-${month}-01`;
                 const endDate = `${new Date().getFullYear()}-${month}-31`;
-                let dashboardData;
+                let featureData;
                 if (props.path) {
-                    if (dashboard.name === "Todos") {
-                        dashboardData = await getByDate({
+                    if (feature.name === "Todos") {
+                        featureData = await getByDate({
                             project: props.path,
                             startDate,
                             endDate
                         });
                     } else {
-                        dashboardData = await getByDashboardAndDate({
+                        featureData = await getByFeatureAndDate({
                             project: props.path,
-                            dashboardName: dashboard.name,
+                            featureName: feature.name,
                             startDate,
                             endDate
                         });
                     }
                 }
-                calculateTotals(dashboardData);
+                calculateTotals(featureData);
             } catch (error) {
                 console.error("Erro ao buscar dados do dashboard:", error);
             }
         };
 
-        const calculateTotals = (dashboardData: DataTableItem[]) => {
-            passedTotal.value = dashboardData.reduce((total, item) => total + (item.result.scenariosPassed || 0), 0);
-            failedTotal.value = dashboardData.reduce((total, item) => total + (item.result.scenariosFailed || 0), 0);
-            skippedTotal.value = dashboardData.reduce((total, item) => total + (item.result.scenariosSkipped || 0), 0);
-            pendingTotal.value = dashboardData.reduce((total, item) => total + (item.result.scenariosPending || 0), 0);
-            undefinedTotal.value = dashboardData.reduce((total, item) => total + (item.result.scenariosUndefined || 0), 0);
-            ambiguousTotal.value = dashboardData.reduce((total, item) => total + (item.result.scenariosAmbiguous || 0), 0);
-            scenariosTotal.value = dashboardData.reduce((total, item) => total + (item.result.scenariosTotal || 0), 0);
+        const calculateTotals = (featureData: DataTableItem[]) => {
+            passedTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosPassed || 0), 0);
+            failedTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosFailed || 0), 0);
+            skippedTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosSkipped || 0), 0);
+            pendingTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosPending || 0), 0);
+            undefinedTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosUndefined || 0), 0);
+            ambiguousTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosAmbiguous || 0), 0);
+            scenariosTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosTotal || 0), 0);
         };
 
         const dataLabels = computed(() => {
@@ -134,8 +134,8 @@ export default defineComponent({
         return {
             selectedMonth,
             selectMonth,
-            selectedDashboard,
-            selectDashboard,
+            selectedFeature,
+            selectFeature,
             passedTotal,
             failedTotal,
             skippedTotal,
