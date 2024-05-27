@@ -19,7 +19,7 @@ import { defineComponent, ref, watch, Ref } from 'vue';
 import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
 import ChartPie from "../ChartPie.vue";
-import { getFeatures, getByFeatureAndDate, getByDate } from "../../services/api";
+import { getFeatures, getByFeatureAndDate } from "../../services/api";
 
 interface FeatureProps {
     name: string;
@@ -56,9 +56,9 @@ export default defineComponent({
         }
     },
     setup(props) {
-        const selectedDate = ref<Date | null>(null);
-        const selectedFeature = ref<FeatureProps | null>(null);
-        const selectFeature = ref<FeatureProps[]>([]);
+        const selectedDate = ref<Date>(new Date);
+        const selectedFeature = ref<FeatureProps>({ name: "jobNoturno" });
+        const selectFeature = ref<FeatureProps[]>([{ name: "jobNoturno" }]);
         const totalScenarios: Ref<number> = ref(0);
         const totalFailed: Ref<number> = ref(0);
         const totalPassed: Ref<number> = ref(0);
@@ -66,12 +66,21 @@ export default defineComponent({
         const totalPending: Ref<number> = ref(0);
         const totalUndefined: Ref<number> = ref(0);
         const totalAmbiguous: Ref<number> = ref(0);
-        console.log("PATH: " + props.path)
 
-        const fetchFeaturesNames = async () => {
+        const fetchFeaturesNames = async (date: Date) => {
+            const nextDay = new Date(date.getTime() + 24 * 60 * 60 * 1000);
+            const formattedDate = nextDay.toISOString().split('T')[0];
+
             if (props.path != "/") {
                 try {
-                    const FeatureData = await getFeatures({ project: props.path });
+                    let featureData = await getByFeatureAndDate({
+                        project: props.path,
+                        dashboardName: 'jobNoturno',
+                        startDate: formattedDate,
+                        endDate: formattedDate
+                    });
+                  
+                    const FeatureData = await getFeatures({ project: props.path, execID: featureData.data.execID });
                     const dataFromAPI = FeatureData.map((name: string) => ({ name }));
                     selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
                 } catch (error) {
@@ -84,20 +93,18 @@ export default defineComponent({
             try {
                 const nextDay = new Date(date.getTime() + 24 * 60 * 60 * 1000);
                 const formattedDate = nextDay.toISOString().split('T')[0];
-                let featureData;
+                let featureData = await getByFeatureAndDate({
+                    project: props.path,
+                    dashboardName: feature.name,
+                    startDate: formattedDate,
+                    endDate: formattedDate
+                });
                 if (feature.name === "Todos") {
-                    featureData = await getByDate({
+                    featureData = await getFeatures({
                         project: props.path,
-                        startDate: formattedDate,
-                        endDate: formattedDate
+                        execID: "",
                     });
                 } else {
-                    featureData = await getByFeatureAndDate({
-                        project: props.path,
-                        featureName: feature.name,
-                        startDate: formattedDate,
-                        endDate: formattedDate
-                    });
                 }
                 updateData(featureData);
             } catch (error) {
@@ -116,10 +123,11 @@ export default defineComponent({
         };
 
         watch([selectedDate, selectedFeature], ([date, feature]) => {
+            fetchFeaturesNames(date);
+
             if (date && feature) {
                 fetchData(date, feature);
             }
-            fetchFeaturesNames();
         });
 
         return {

@@ -1,17 +1,21 @@
 import axios from "axios";
-interface getByDateProps extends getByFeatureProps {
+import { featureData } from "../assets/dataMock";
+interface getByDateProps {
+  project: string;
+  dashboardName: string;
   startDate: string;
   endDate: string;
 }
+interface getFeaturesProps {
+  project: string;
+  execID: string;
+}
 
-export interface getByFeatureProps {
+interface getDashboardNameProps {
   project: string;
 }
 
-interface getByFeatureAndDateProps extends getByDateProps {
-  featureName: string;
-}
-const baseUrl = "https://devcukes.seg-social.pt/rest/dashboards";
+const baseUrl = "https://devcukes.seg-social.pt/rest";
 
 async function getApi(url: string) {
   console.log("url: " + url);
@@ -20,23 +24,22 @@ async function getApi(url: string) {
   return response.data;
 }
 
-export function getByDate({ project, startDate, endDate }: getByDateProps) {
-  return getApi(`${baseUrl + project.toUpperCase()}/${startDate}/${endDate}`);
-}
-
-export async function getFeatures({ project }: getByFeatureProps) {
-  return getApi(`${baseUrl + project.toUpperCase()}/dashboardName`);
-}
-
-export async function getByFeatureAndDate({
-  project,
-  featureName,
-  startDate,
-  endDate,
-}: getByFeatureAndDateProps) {
+export async function getFeatures({ ...props }: getFeaturesProps) {
   return getApi(
-    `${
-      baseUrl + project.toUpperCase()
-    }/${featureName}/${startDate}/${endDate}`
+    `${baseUrl}/features${props.project.toUpperCase()}/${props.execID}`
+  );
+}
+
+export async function getDashboardName({ ...props }: getDashboardNameProps) {
+  return getApi(
+    `${baseUrl}/dashboards${props.project.toUpperCase()}/dashboardName`
+  );
+}
+
+export async function getByFeatureAndDate({ ...props }: getByDateProps) {
+  return getApi(
+    `${baseUrl}/dashboards${props.project.toUpperCase()}/${
+      props.dashboardName
+    }/${props.startDate}/${props.endDate}`
   );
 }

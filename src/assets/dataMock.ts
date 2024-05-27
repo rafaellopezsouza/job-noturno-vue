@@ -1,4 +1,3 @@
-
 export const dataTable = [
   {
     execID: "e84482e47dad4322a38eca6b6b40b3e1",
@@ -116,4 +115,25 @@ export const dashboardName = [
   "PARE010 - Subsidio por Assistencia a Doença Filho (SAD)",
   "PARE009 - Subsídio Assistência Familiar para Neto (SAN)",
   "PARE007 - Subsidio Parental Alargado (SPA)",
+];
+
+export const featureData = [
+  {
+    execID: "bc7488be783f4b5d81cad025b0b8ee5c",
+    date: "2024-05-01 05:55",
+    environ: "dev",
+    version: "5.47.0-SNAPSHOT",
+    module: "it-dla-browser",
+    result: {
+      duration: "3h:48m:48s",
+      scenariosPassed: 120,
+      scenariosSkipped: 15,
+      scenariosFailed: 211,
+      scenariosPending: 0,
+      scenariosUndefined: 0,
+      scenariosAmbiguous: 0,
+      scenariosTotal: 346,
+    },
+    dashboardName: "jobNoturno",
+  },
 ];

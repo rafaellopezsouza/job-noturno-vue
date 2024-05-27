@@ -7,7 +7,7 @@
                 placeholder="Selecione uma Funcionalidade" />
         </div>
         <hr>
-        <div class="chart-line"  v-if="scenariosTotal > 0">
+        <div class="chart-line" v-if="scenariosTotal > 0">
             <ChartLine :labels="dataLabels" :totalScenarios="scenariosTotal" :totalPassed="passedTotal"
                 :totalFailed="failedTotal" :totalSkipped="skippedTotal" :totalPending="pendingTotal"
                 :totalUndefined="undefinedTotal" :totalAmbiguous="ambiguousTotal" />
@@ -20,7 +20,7 @@ import { defineComponent, ref, onMounted, watch, computed } from 'vue';
 import Dropdown from 'primevue/dropdown';
 import ChartLine from "../ChartLine.vue";
 import { months } from "../../assets/data";
-import { getFeatures, getByFeatureAndDate, getByDate } from "../../services/api";
+import { getFeatures, getByFeatureAndDate } from "../../services/api";
 
 interface Month {
     month: string;
@@ -58,11 +58,17 @@ export default defineComponent({
         },
     },
     setup(props) {
-        const selectedMonth = ref<Month | null>(null);
+        const getCurrentMonth = (): Month => {
+            const currentDate = new Date();
+            const currentMonthCode = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            return months.find(month => month.code === currentMonthCode) as Month;
+        }
+
+        const selectedMonth = ref<Month>(getCurrentMonth());
         const selectedFeature = ref<FeatureProps | null>(null);
 
         const selectMonth = ref<Month[]>(months);
-        const selectFeature = ref<FeatureProps[]>([]);
+        const selectFeature = ref<FeatureProps[]>([{ name: "jobNoturno" }]);
 
         const passedTotal = ref<number>(0);
         const failedTotal = ref<number>(0);
@@ -74,7 +80,7 @@ export default defineComponent({
 
         const fetchFeatureNames = async () => {
             if (props.path !== undefined) {
-                const FeatureData = await getFeatures({ project: props.path });
+                const FeatureData = await getFeatures({ project: props.path, execID: "" });
                 const dataFromAPI = FeatureData.map((name: string) => ({ name }));
                 selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
             }
@@ -97,15 +103,14 @@ export default defineComponent({
                 let featureData;
                 if (props.path) {
                     if (feature.name === "Todos") {
-                        featureData = await getByDate({
+                        featureData = await getFeatures({
                             project: props.path,
-                            startDate,
-                            endDate
+                            execID: ""
                         });
                     } else {
                         featureData = await getByFeatureAndDate({
                             project: props.path,
-                            featureName: feature.name,
+                            dashboardName: feature.name,
                             startDate,
                             endDate
                         });

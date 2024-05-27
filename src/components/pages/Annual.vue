@@ -20,7 +20,7 @@ import { defineComponent, ref, onMounted, watch, computed } from 'vue';
 import Dropdown from 'primevue/dropdown';
 import ChartLine from "../ChartLine.vue";
 import { months, years } from "../../assets/data";
-import { getFeatures, getByFeatureAndDate, getByDate } from '../../services/api';
+import { getFeatures, getByFeatureAndDate } from '../../services/api';
 
 interface YearProps {
     year: string;
@@ -76,7 +76,7 @@ export default defineComponent({
 
         const fetchFeatureNames = async () => {
             if (props.path !== undefined) {
-                const featureData = await getFeatures({ project: props.path });
+                const featureData = await getFeatures({ project: props.path, execID: "" });
                 const dataFromAPI = featureData.map((name: string) => ({ name }));
                 selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
             }
@@ -89,15 +89,14 @@ export default defineComponent({
                 let featureData;
                 if (props.path) {
                     if (feature.name === "Todos") {
-                        featureData = await getByDate({
+                        featureData = await getFeatures({
                             project: props.path,
-                            startDate,
-                            endDate
+                            execID: "",
                         })
                     } else {
                         featureData = await getByFeatureAndDate({
                             project: props.path,
-                            featureName: feature.name,
+                            dashboardName: feature.name,
                             startDate,
                             endDate
                         });
