@@ -31,3 +31,5 @@ export const labelsGraphs = {
   total: "Total",
   time: "Tempo",
 };
+
+export const dashboardName = ["jobNoturno"];

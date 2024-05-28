@@ -1,5 +1,5 @@
 import axios from "axios";
-import { featureData } from "../assets/dataMock";
+import { data, featureData } from "../assets/dataMock";
 interface getByDateProps {
   project: string;
   dashboardName: string;
@@ -25,6 +25,7 @@ async function getApi(url: string) {
 }
 
 export async function getFeatures({ ...props }: getFeaturesProps) {
+  return data;  
   return getApi(
     `${baseUrl}/features${props.project.toUpperCase()}/${props.execID}`
   );
@@ -37,6 +38,8 @@ export async function getDashboardName({ ...props }: getDashboardNameProps) {
 }
 
 export async function getByFeatureAndDate({ ...props }: getByDateProps) {
+  return data;  
+
   return getApi(
     `${baseUrl}/dashboards${props.project.toUpperCase()}/${
       props.dashboardName

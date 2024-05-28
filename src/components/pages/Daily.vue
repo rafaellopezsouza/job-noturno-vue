@@ -1,31 +1,33 @@
 <template>
     <div class="filter-options">
-        <Calendar v-model="selectedDate" showIcon dateFormat="dd/mm/yy" inputId="selectDate"
-            placeholder="Selecione uma data" />
-        <Dropdown id="select-Feature" v-model="selectedFeature" :options="selectFeature" optionLabel="name"
-            placeholder="Selecione uma Funcionalidade" />
+        <Calendar class="dropdown-select-date" v-model="selectedDate" showIcon dateFormat="dd/mm/yy"
+            inputId="selectDate" placeholder="Selecione uma data" />
+        <Dropdown class="dropdown-select-options" id="select-Feature" v-model="selectedFeature" :options="selectFeature"
+            optionLabel="name" placeholder="Selecione uma Funcionalidade" />
     </div>
     <hr>
-    <div v-if="totalScenarios > 0">
-        <ChartPie :totalScenarios="totalScenarios" :totalFailed="totalFailed" :totalPassed="totalPassed"
-            :totalSkipped="totalSkipped" :totalPending="totalPending" :totalUndefined="totalUndefined"
-            :totalAmbiguous="totalAmbiguous" />
-    </div>
+    <ChartPie class="graph" v-if="totalScenarios > 0" :totalScenarios="totalScenarios" :totalFailed="totalFailed"
+        :totalPassed="totalPassed" :totalSkipped="totalSkipped" :totalPending="totalPending"
+        :totalUndefined="totalUndefined" :totalAmbiguous="totalAmbiguous" @update-data="updateDataTable" />
+    <Table class="table" v-if="selectedFeature.name === 'Todos'" :dataTable="dataTable" :totals="dataResult"/>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watch, Ref, onMounted } from 'vue';
 import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
-import ChartPie from "../ChartPie.vue";
-import { getByFeatureAndDate } from "../../services/api";
+import { getByFeatureAndDate, getFeatures } from "../../services/api";
 import { dashboardName } from '../../assets/data';
+import ChartPie from "../ChartPie.vue";
+import Table from "../Table.vue";
 
 interface FeatureProps {
     name: string;
+    featureID: number;
 }
 
 interface DataTableItem {
+    name: string;
     date: string;
     result: {
         scenariosTotal: number;
@@ -44,6 +46,7 @@ export default defineComponent({
         Calendar,
         Dropdown,
         ChartPie,
+        Table,
     },
     props: {
         path: {
@@ -57,7 +60,7 @@ export default defineComponent({
     },
     setup(props) {
         const selectedDate = ref<Date>(new Date());
-        const selectedFeature = ref<FeatureProps | null>({ name: "Todos" });
+        const selectedFeature = ref<FeatureProps>({ name: "Todos" });
         const selectFeature = ref<FeatureProps[]>([]);
         const totalScenarios: Ref<number> = ref(0);
         const totalFailed: Ref<number> = ref(0);
@@ -66,47 +69,50 @@ export default defineComponent({
         const totalPending: Ref<number> = ref(0);
         const totalUndefined: Ref<number> = ref(0);
         const totalAmbiguous: Ref<number> = ref(0);
-        var dataResult: any | null;
+        const dataTable = ref<DataTableItem[]>([]);
+        const dataResult = ref<DataTableItem[]>([]);
+        var execID: string | null = null;
 
         const fetchFeaturesNames = async (date: Date) => {
-            try {
-                const nextDay = new Date(date.getTime() + 24 * 60 * 60 * 1000);
-                const formattedDate = nextDay.toISOString().split('T')[0];
-                dataResult = await getByFeatureAndDate({
+            const nextDay = new Date(date.getTime() + 24 * 60 * 60 * 1000);
+            const formattedDate = nextDay.toISOString().split('T')[0];
+            const result = await getByFeatureAndDate({
+                project: props.path,
+                dashboardName: dashboardName[0],
+                startDate: formattedDate,
+                endDate: formattedDate
+            });
+            dataResult.value = result;
+            execID = result[0].execID;
+            const featuresResult = await getFeatures({
+                project: props.path,
+                execID
+            });
+            dataTable.value = featuresResult.map(item => ({ name: item.name, ...item }));
+            const dataFromAPI = featuresResult.map((item: any) => ({ name: item.name }));
+            selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
+        };
+
+        const fetchData = async (date: Date, feature: FeatureProps) => {
+            const nextDay = new Date(date.getTime() + 24 * 60 * 60 * 1000);
+            const formattedDate = nextDay.toISOString().split('T')[0];
+            let featureData;
+            if (feature.name === "Todos") {
+                featureData = await getByFeatureAndDate({
                     project: props.path,
                     dashboardName: dashboardName[0],
                     startDate: formattedDate,
                     endDate: formattedDate
                 });
-
-                const dataFromAPI = dataResult.map((item: any) => ({ name: item.name }));
-                selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
-            } catch (error) {
-                selectFeature.value = [{ name: "Nenhum valor encontrado" }];
+                dataResult.value = featureData;
+            } else {
+                const featuresResult = await getFeatures({
+                    project: props.path,
+                    execID
+                });
+                featureData = featuresResult.filter((f: any) => f.name === feature.name);
             }
-        };
-
-        const fetchData = async (date: Date, feature: FeatureProps) => {
-            try {
-                const nextDay = new Date(date.getTime() + 24 * 60 * 60 * 1000);
-                const formattedDate = nextDay.toISOString().split('T')[0];
-                if (feature.name === "Todos") {
-                    dataResult = await getByFeatureAndDate({
-                        project: props.path,
-                        dashboardName: dashboardName[0],
-                        startDate: formattedDate,
-                        endDate: formattedDate
-                    });
-                    const dataFromAPI = dataResult.map((item: any) => ({ name: item.name }));
-                    selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
-                }
-                else {
-                    dataResult = dataResult.filter((f: any) => f.name === feature.name);
-                }
-                updateData(dataResult);
-            } catch (error) {
-                console.error("Erro ao buscar dados do feature:", error);
-            }
+            updateData(featureData);
         };
 
         const updateData = (featureData: DataTableItem[]) => {
@@ -119,13 +125,12 @@ export default defineComponent({
             totalAmbiguous.value = featureData.reduce((total, item) => total + (item.result.scenariosAmbiguous || 0), 0);
         };
 
-
         watch([selectedFeature, selectedDate], ([feature, date]) => {
             if (date && feature) {
                 fetchData(date, feature);
                 fetchFeaturesNames(date);
             }
-        })
+        });
 
         onMounted(() => {
             fetchFeaturesNames(selectedDate.value);
@@ -141,10 +146,23 @@ export default defineComponent({
             totalSkipped,
             totalPending,
             totalUndefined,
-            totalAmbiguous
+            totalAmbiguous,
+            dataTable,
+            dataResult
         };
     },
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.graph {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.table {
+    width: 100%;
+    margin-top: 20px; 
+}
+</style>

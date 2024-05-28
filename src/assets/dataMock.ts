@@ -1,139 +1,412 @@
-export const dataTable = [
+export const data = [
+
   {
-    execID: "e84482e47dad4322a38eca6b6b40b3e1",
-    date: "2024-05-04 06:08",
-    environ: "dev",
-    version: "5.179.0-SNAPSHOT",
-    module: "it-itpt-browser",
+
+    featureID: 1,
+
+    name: "9004 - Anular pedidos de destacamento e determinação de legislação",
+
+    uri: "classpath:features/9000_ffta_feature_file_testes_automatizados/9004_ffta_anular_pedido.feature",
+
+    tags: [
+
+      "@browser",
+
+      "@auth",
+
+      "@ffta",
+
+      "@ffta9004",
+
+      "@DLA_anular",
+
+      "@job_noturno",
+
+    ],
+
     result: {
-      duration: 2960962000000,
-      scenariosPassed: 59,
-      scenariosSkipped: 1,
-      scenariosFailed: 11,
-      scenariosTotal: 70,
-      scenariosPending: 0,
-      scenariosUndefined: 0,
-      scenariosAmbiguous: 0,
-    },
-    dashboardName: "9002 - Regressão",
-  },
-  {
-    execID: "025cd1889428471bb3d4ff66ce787e7d",
-    date: "2024-04-12 03:49",
-    environ: "dev",
-    version: "5.179.0-SNAPSHOT",
-    module: "it-itpt-browser",
-    result: {
-      duration: 4521286000000,
-      scenariosPassed: 63,
-      scenariosSkipped: 2,
-      scenariosFailed: 7,
-      scenariosTotal: 70,
-      scenariosPending: 0,
-      scenariosUndefined: 0,
-      scenariosAmbiguous: 0,
-    },
-    dashboardName: "9002 - Regressão",
-  },
-  {
-    execID: "978b83b6c171427f97b8dd058b9267ad",
-    date: "2024-04-11 08:17",
-    environ: "dev",
-    version: "5.179.0-SNAPSHOT",
-    module: "it-itpt-browser",
-    result: {
-      duration: 5305395000000,
-      scenariosPassed: 58,
-      scenariosSkipped: 1,
-      scenariosFailed: 12,
-      scenariosTotal: 70,
-      scenariosPending: 0,
-      scenariosUndefined: 0,
-      scenariosAmbiguous: 0,
-    },
-    dashboardName: "9002 - Regressão",
-  },
-  {
-    execID: "a844ddcc539941e4b5899e317d3eaa7f",
-    date: "2024-05-04 05:16",
-    environ: "dev",
-    version: "5.179.0-SNAPSHOT",
-    module: "it-itpt-browser",
-    result: {
-      duration: 5088794000000,
-      scenariosPassed: 88,
+
+      duration: "24m:47s",
+
+      scenariosPassed: 1,
+
       scenariosSkipped: 0,
+
+      scenariosFailed: 55,
+
+      scenariosTotal: 56,
+
+    },
+
+  },
+
+  {
+
+    _id: "6631cb20e291f93a773e49f5",
+
+    execID: "bc7488be783f4b5d81cad025b0b8ee5c",
+
+    featureID: 2,
+
+    name: "9009 - Consultar detalhe de um pedido de destacamento ou de determinação de legislação",
+
+    uri: "classpath:features/9000_ffta_feature_file_testes_automatizados/9009_ffta_consultarDetalhe_pedido.feature",
+
+    tags: [
+
+      "@browser",
+
+      "@auth",
+
+      "@ffta",
+
+      "@ffta9009",
+
+      "@DLA_consultarDetalhe",
+
+      "@job_noturno",
+
+    ],
+
+    result: {
+
+      duration: "32m:36s",
+
+      scenariosPassed: 36,
+
+      scenariosSkipped: 0,
+
+      scenariosFailed: 44,
+
+      scenariosTotal: 80,
+
+    },
+
+  },
+
+  {
+
+    _id: "6631cb24e291f93a773e4d80",
+
+    execID: "bc7488be783f4b5d81cad025b0b8ee5c",
+
+    featureID: 3,
+
+    name: "9012 - Emitir comprovativo de um pedido",
+
+    uri: "classpath:features/9000_ffta_feature_file_testes_automatizados/9012_ffta_emitirComprovativo_pedido.feature",
+
+    tags: [
+
+      "@browser",
+
+      "@auth",
+
+      "@ffta",
+
+      "@ffta9012",
+
+      "@DLA_emitirComprovativo",
+
+      "@job_noturno",
+
+    ],
+
+    result: {
+
+      duration: "32m:26s",
+
+      scenariosPassed: 44,
+
+      scenariosSkipped: 0,
+
+      scenariosFailed: 37,
+
+      scenariosTotal: 81,
+
+    },
+
+  },
+
+  {
+
+    _id: "6631cb25e291f93a773e4ec7",
+
+    execID: "bc7488be783f4b5d81cad025b0b8ee5c",
+
+    featureID: 4,
+
+    name: "9027 - Registo de novo pedido de determinação de legislação para trabalhadores por conta de outrem",
+
+    uri: "classpath:features/9000_ffta_feature_file_testes_automatizados/9027_ffta_registoOutrosTCO.feature",
+
+    tags: ["@browser", "@auth", "@DLA_registoOutrosTCO", "@job_noturno"],
+
+    result: {
+
+      duration: "18m:43s",
+
+      scenariosPassed: 3,
+
+      scenariosSkipped: 4,
+
       scenariosFailed: 10,
-      scenariosTotal: 98,
-      scenariosPending: 0,
-      scenariosUndefined: 0,
-      scenariosAmbiguous: 0,
+
+      scenariosTotal: 17,
+
     },
-    dashboardName: "9008 - Subsídio Assistência Familiar para Filho (SAF)",
+
   },
+
   {
-    execID: "c819693886ad4b50aef3c526dda74559",
-    date: "2024-04-12 05:02",
-    environ: "dev",
-    version: "5.179.0-SNAPSHOT",
-    module: "it-itpt-browser",
+
+    _id: "6631cb28e291f93a773e519f",
+
+    execID: "bc7488be783f4b5d81cad025b0b8ee5c",
+
+    featureID: 5,
+
+    name: "9028 - Registo de novo pedido de destacamento para trabalhadores por conta de outrem",
+
+    uri: "classpath:features/9000_ffta_feature_file_testes_automatizados/9028_ffta_registoTCO.feature",
+
+    tags: ["@browser", "@auth", "@DLA_registoTCO", "@job_noturno"],
+
     result: {
-      duration: 4133785000000,
-      scenariosPassed: 47,
-      scenariosSkipped: 6,
-      scenariosFailed: 15,
-      scenariosTotal: 68,
-      scenariosPending: 0,
-      scenariosUndefined: 10,
-      scenariosAmbiguous: 0,
+
+      duration: "41m:41s",
+
+      scenariosPassed: 15,
+
+      scenariosSkipped: 0,
+
+      scenariosFailed: 8,
+
+      scenariosTotal: 23,
+
     },
-    dashboardName: "9008 - Subsídio Assistência Familiar para Filho (SAF)",
+
   },
+
   {
-    execID: "3c15aeb9e9b443698fb6e730d0804510",
-    date: "2024-04-11 09:54",
-    environ: "dev",
-    version: "5.179.0-SNAPSHOT",
-    module: "it-itpt-browser",
+
+    _id: "6631cb28e291f93a773e52b4",
+
+    execID: "bc7488be783f4b5d81cad025b0b8ee5c",
+
+    featureID: 6,
+
+    name: "9029 - Registo de novo pedido de destacamento para trabalhadores independentes",
+
+    uri: "classpath:features/9000_ffta_feature_file_testes_automatizados/9029_ffta_registoTI.feature",
+
+    tags: [
+
+      "@browser",
+
+      "@ffta",
+
+      "@ffta9029",
+
+      "@auth",
+
+      "@registo2-destacamento_TI",
+
+      "@job_noturno",
+
+    ],
+
     result: {
-      duration: 5294150000000,
-      scenariosPassed: 37,
-      scenariosSkipped: 6,
-      scenariosFailed: 25,
-      scenariosTotal: 68,
-      scenariosPending: 1,
-      scenariosUndefined: 1,
-      scenariosAmbiguous: 1,
+
+      duration: "25m:14s",
+
+      scenariosPassed: 4,
+
+      scenariosSkipped: 0,
+
+      scenariosFailed: 9,
+
+      scenariosTotal: 13,
+
     },
-    dashboardName: "9008 - Subsídio Assistência Familiar para Filho (SAF)",
+
   },
+
+  {
+
+    _id: "6631cb29e291f93a773e5367",
+
+    execID: "bc7488be783f4b5d81cad025b0b8ee5c",
+
+    featureID: 7,
+
+    name: "9030 - Registo de novo pedido de determinação de legislação para trabalhadores independentes",
+
+    uri: "classpath:features/9000_ffta_feature_file_testes_automatizados/9030_ffta_registoTIVarios.feature",
+
+    tags: ["@browser", "@ffta", "@ffta9030", "@auth", "@job_noturno"],
+
+    result: {
+
+      duration: "4m:20s",
+
+      scenariosPassed: 1,
+
+      scenariosSkipped: 0,
+
+      scenariosFailed: 10,
+
+      scenariosTotal: 11,
+
+    },
+
+  },
+
+  {
+
+    _id: "6631cb2ae291f93a773e5497",
+
+    execID: "bc7488be783f4b5d81cad025b0b8ee5c",
+
+    featureID: 8,
+
+    name: "9031 - Registo de novo pedido de determinação de legislação para trabalhadores de transportes internacionais",
+
+    uri: "classpath:features/9000_ffta_feature_file_testes_automatizados/9031_ffta_registoTransportes.feature",
+
+    tags: ["@browser", "@auth", "@job_noturno"],
+
+    result: {
+
+      duration: "15m:2s",
+
+      scenariosPassed: 8,
+
+      scenariosSkipped: 4,
+
+      scenariosFailed: 5,
+
+      scenariosTotal: 17,
+
+    },
+
+  },
+
+  {
+
+    _id: "6631cb2be291f93a773e56d7",
+
+    execID: "bc7488be783f4b5d81cad025b0b8ee5c",
+
+    featureID: 9,
+
+    name: "9032 - Registo de novo pedido de determinação de legislação para tripulantes de voo e cabine",
+
+    uri: "classpath:features/9000_ffta_feature_file_testes_automatizados/9032_ffta_registoTripulantes.feature",
+
+    tags: ["@browser", "@ffta", "@ffta9032", "@auth", "@job_noturno"],
+
+    result: {
+
+      duration: "25m:26s",
+
+      scenariosPassed: 1,
+
+      scenariosSkipped: 7,
+
+      scenariosFailed: 24,
+
+      scenariosTotal: 32,
+
+    },
+
+  },
+
+  {
+
+    _id: "6631cb2ce291f93a773e57ba",
+
+    execID: "bc7488be783f4b5d81cad025b0b8ee5c",
+
+    featureID: 10,
+
+    name: "9033 - Reserva de diferentes pedidos de destacamento ou de determinação de legislação",
+
+    uri: "classpath:features/9000_ffta_feature_file_testes_automatizados/9033_ffta_reservar_pedido.feature",
+
+    tags: [
+
+      "@browser",
+
+      "@auth",
+
+      "@ffta",
+
+      "@ffta9033",
+
+      "@DLA_reservar",
+
+      "@job_noturno",
+
+    ],
+
+    result: {
+
+      duration: "8m:29s",
+
+      scenariosPassed: 7,
+
+      scenariosSkipped: 0,
+
+      scenariosFailed: 9,
+
+      scenariosTotal: 16,
+
+    },
+
+  },
+
 ];
 
-export const dashboardName = [
-  "9002 - Regressão",
-  "9008 - Subsídio Assistência Familiar para Filho (SAF)",
-  "PARE010 - Subsidio por Assistencia a Doença Filho (SAD)",
-  "PARE009 - Subsídio Assistência Familiar para Neto (SAN)",
-  "PARE007 - Subsidio Parental Alargado (SPA)",
-];
+
 
 export const featureData = [
+
   {
+
     execID: "bc7488be783f4b5d81cad025b0b8ee5c",
+
     date: "2024-05-01 05:55",
+
     environ: "dev",
+
     version: "5.47.0-SNAPSHOT",
+
     module: "it-dla-browser",
+
     result: {
+
       duration: "3h:48m:48s",
+
       scenariosPassed: 120,
+
       scenariosSkipped: 15,
+
       scenariosFailed: 211,
+
       scenariosPending: 0,
+
       scenariosUndefined: 0,
+
       scenariosAmbiguous: 0,
+
       scenariosTotal: 346,
+
     },
+
     dashboardName: "jobNoturno",
+
   },
+
 ];
+

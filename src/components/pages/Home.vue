@@ -5,13 +5,13 @@
             <TabView>
                 <TabPanel v-for="tab in tabs" :key="tab.title" :header="tab.title">
                     <div v-if="tab.content === 'daily'">
-                        <Daily :path="$route.path" :dataTable="data" />
+                        <Daily :path="$route.path" :dataTable="dataTable" />
                     </div>
                     <div v-if="tab.content === 'monthly'">
-                        <Monthly :path="$route.path" :dataTable="data" />
+                        <Monthly :path="$route.path" :dataTable="dataTable" />
                     </div>
                     <div v-if="tab.content === 'annual'">
-                        <Annual :path="$route.path" :dataTable="data" />
+                        <Annual :path="$route.path" :dataTable="dataTable" />
                     </div>
                 </TabPanel>
             </TabView>
