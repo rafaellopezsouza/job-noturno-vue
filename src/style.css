@@ -47,10 +47,24 @@ body {
   height: 100%;
 }
 
-.pagePadding {
+.page-padding {
   padding: 0 5%;
 }
 
 .botMargin {
   margin: 0 0 50px 0;
+}
+
+.dropdown-select-options {
+  width: 400px;
+}
+
+.dropdown-select-date {
+  width: 200px;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }

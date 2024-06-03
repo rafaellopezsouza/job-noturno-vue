@@ -74,23 +74,29 @@ export default defineComponent({
         var execID: string | null = null;
 
         const fetchFeaturesNames = async (date: Date) => {
-            const nextDay = new Date(date.getTime() + 24 * 60 * 60 * 1000);
-            const formattedDate = nextDay.toISOString().split('T')[0];
-            const result = await getByFeatureAndDate({
-                project: props.path,
-                dashboardName: dashboardName[0],
-                startDate: formattedDate,
-                endDate: formattedDate
-            });
-            dataResult.value = result;
-            execID = result[0].execID;
-            const featuresResult = await getFeatures({
-                project: props.path,
-                execID
-            });
-            dataTable.value = featuresResult.map(item => ({ name: item.name, ...item }));
-            const dataFromAPI = featuresResult.map((item: any) => ({ name: item.name }));
-            selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
+            try{
+                const nextDay = new Date(date.getTime() + 24 * 60 * 60 * 1000);
+                const formattedDate = nextDay.toISOString().split('T')[0];
+                const result = await getByFeatureAndDate({
+                    project: props.path,
+                    dashboardName: dashboardName[0],
+                    startDate: formattedDate,
+                    endDate: formattedDate
+                });
+
+                dataResult.value = result;
+                execID = result[0].execID;
+                const featuresResult = await getFeatures({
+                    project: props.path,
+                    execID
+                });
+                dataTable.value = featuresResult.map(item => ({ name: item.name, ...item }));
+                const dataFromAPI = featuresResult.map((item: any) => ({ name: item.name }));
+                selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
+            }
+            catch(error){
+                selectFeature.value = [{ name: "Nenhum valor encontrado" }];
+            }
         };
 
         const fetchData = async (date: Date, feature: FeatureProps) => {
@@ -159,10 +165,11 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 50px;
 }
 
 .table {
     width: 100%;
-    margin-top: 20px; 
+    margin-top: 300px; 
 }
 </style>

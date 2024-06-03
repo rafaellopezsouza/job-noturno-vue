@@ -5,13 +5,13 @@
             <TabView>
                 <TabPanel v-for="tab in tabs" :key="tab.title" :header="tab.title">
                     <div v-if="tab.content === 'daily'">
-                        <Daily :path="$route.path" :dataTable="dataTable" />
+                        <Daily :path="$route.path" />
                     </div>
                     <div v-if="tab.content === 'monthly'">
-                        <Monthly :path="$route.path" :dataTable="dataTable" />
+                        <Monthly :path="$route.path" />
                     </div>
                     <div v-if="tab.content === 'annual'">
-                        <Annual :path="$route.path" :dataTable="dataTable" />
+                        <Annual :path="$route.path" />
                     </div>
                 </TabPanel>
             </TabView>
@@ -28,7 +28,6 @@ import Header from '../Header.vue';
 import Daily from './Daily.vue';
 import Monthly from './Monthly.vue';
 import Annual from './Annual.vue';
-import { data } from '../../assets/dataMock';
 import { tabsName } from '../../assets/data';
 
 export default {
@@ -46,7 +45,6 @@ export default {
 
         return {
             tabs,
-            data,
         };
     },
     data() {

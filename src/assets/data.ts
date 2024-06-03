@@ -19,7 +19,8 @@ export const months = [
   { month: "Dezembro", code: "12" },
 ];
 
-export const years = ["2021", "2022", "2023", "2024"];
+export const years = [
+  {year: "2021"}, {year:"2022"}, {year:"2023"}, {year:"2024"}];
 
 export const labelsGraphs = {
   passed: "Passou",

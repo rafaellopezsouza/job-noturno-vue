@@ -1,13 +1,13 @@
 <template>
-    <div class="monthly">
+    <div>
         <div class="filter-options">
-            <Dropdown id="select-month" class="dropdown-month" v-model="selectedMonth" :options="selectMonth"
+            <Dropdown class="dropdown-select-date" id="select-month" v-model="selectedMonth" :options="selectMonth"
                 optionLabel="month" placeholder="Selecione o mês" />
-            <Dropdown id="select-dashboard" v-model="selectedFeature" :options="selectFeature" optionLabel="name"
+            <Dropdown class="dropdown-select-options" id="select-dashboard" v-model="selectedFeature" :options="selectFeature" optionLabel="name"
                 placeholder="Selecione uma Funcionalidade" />
         </div>
         <hr>
-        <div class="chart-line" v-if="scenariosTotal > 0">
+        <div class="chart-line">
             <ChartLine :labels="dataLabels" :totalScenarios="scenariosTotal" :totalPassed="passedTotal"
                 :totalFailed="failedTotal" :totalSkipped="skippedTotal" :totalPending="pendingTotal"
                 :totalUndefined="undefinedTotal" :totalAmbiguous="ambiguousTotal" />
@@ -16,11 +16,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch, computed } from 'vue';
+import { defineComponent, ref, onMounted, watch } from 'vue';
 import Dropdown from 'primevue/dropdown';
 import ChartLine from "../ChartLine.vue";
 import { months } from "../../assets/data";
-import { getFeatures, getByFeatureAndDate } from "../../services/api";
+import { getFeatures, getByFeatureAndDate, getFeaturesByMonth } from "../../services/api";
+import { dashboardName } from '../../assets/data';
 
 interface Month {
     month: string;
@@ -52,10 +53,6 @@ export default defineComponent({
     },
     props: {
         path: String,
-        dataTable: {
-            type: Array as () => DataTableItem[],
-            required: true
-        },
     },
     setup(props) {
         const getCurrentMonth = (): Month => {
@@ -65,75 +62,145 @@ export default defineComponent({
         }
 
         const selectedMonth = ref<Month>(getCurrentMonth());
-        const selectedFeature = ref<FeatureProps | null>(null);
-
+        const selectedFeature = ref<FeatureProps>({ name: "Todos" });
         const selectMonth = ref<Month[]>(months);
-        const selectFeature = ref<FeatureProps[]>([{ name: "jobNoturno" }]);
+        const selectFeature = ref<FeatureProps[]>([]);
+        const passedTotal = ref<number[]>([]);
+        const failedTotal = ref<number[]>([]);
+        const skippedTotal = ref<number[]>([]);
+        const pendingTotal = ref<number[]>([]);
+        const undefinedTotal = ref<number[]>([]);
+        const ambiguousTotal = ref<number[]>([]);
+        const scenariosTotal = ref<number[]>([]);
+        const dataLabels = ref<string[]>([]);
+        let dataResult: DataTableItem[] = [];
 
-        const passedTotal = ref<number>(0);
-        const failedTotal = ref<number>(0);
-        const skippedTotal = ref<number>(0);
-        const pendingTotal = ref<number>(0);
-        const undefinedTotal = ref<number>(0);
-        const ambiguousTotal = ref<number>(0);
-        const scenariosTotal = ref<number>(0);
-
-        const fetchFeatureNames = async () => {
-            if (props.path !== undefined) {
-                const FeatureData = await getFeatures({ project: props.path, execID: "" });
-                const dataFromAPI = FeatureData.map((name: string) => ({ name }));
-                selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
+        const fetchFeatureNames = async (month: string) => {
+            try {
+                const startDate = `${new Date().getFullYear()}-${month}-01`;
+                const endDate = `${new Date().getFullYear()}-${month}-31`;
+                dataResult = await getByFeatureAndDate({
+                    project: props.path,
+                    dashboardName: dashboardName[0],
+                    startDate,
+                    endDate
+                });
+                const execID = dataResult[0]?.execID;
+                if (execID) {
+                    const featuresResult = await getFeatures({
+                        project: props.path,
+                        execID
+                    });
+                    const dataFromAPI = featuresResult.map((item: any) => ({ name: item.name }));
+                    selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
+                }
+            } catch (error) {
+                console.error("Erro ao buscar nomes de funcionalidades:", error);
+                selectFeature.value = [{ name: "Nenhum valor encontrado" }];
             }
+        };
+
+        const fetchData = async (feature: FeatureProps) => {
+            try {
+                const startDate = `${new Date().getFullYear()}-${selectedMonth.value.code}-01`;
+                const endDate = `${new Date().getFullYear()}-${selectedMonth.value.code}-31`;
+                let featureData;
+                if (feature.name === "Todos") {
+                    featureData = await getByFeatureAndDate({
+                        project: props.path,
+                        dashboardName: dashboardName[0],
+                        startDate,
+                        endDate
+                    });
+                    calculateTotals(featureData);
+                } else {
+                    featureData = await getFeaturesByMonth({
+                        project: props.path, 
+                        data: dataResult,
+                        featureName: feature.name
+                    });
+                    calculateTotalsFromFeatureData(featureData);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar dados:", error);
+                selectFeature.value = [{ name: "Nenhum valor encontrado" }];
+            }
+        };
+
+        const calculateTotalsFromFeatureData = (featureData: any[]) => {
+    featureData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    // Limpe os arrays reativos antes de preenchê-los novamente
+    passedTotal.value = [];
+    failedTotal.value = [];
+    skippedTotal.value = [];
+    pendingTotal.value = [];
+    undefinedTotal.value = [];
+    ambiguousTotal.value = [];
+    scenariosTotal.value = [];
+    dataLabels.value = [];
+
+    featureData.forEach((dayData: any) => {
+        const dayTotal = {
+            passed: 0,
+            failed: 0,
+            skipped: 0,
+            pending: 0,
+            undefined: 0,
+            ambiguous: 0,
+            total: 0
+        };
+
+        dayData.data[0].forEach((feature: any) => {
+            const result = feature.result;
+
+            dayTotal.passed += result.scenariosPassed || 0;
+            dayTotal.failed += result.scenariosFailed || 0;
+            dayTotal.skipped += result.scenariosSkipped || 0;
+            dayTotal.pending += result.scenariosPending || 0;
+            dayTotal.undefined += result.scenariosUndefined || 0;
+            dayTotal.ambiguous += result.scenariosAmbiguous || 0;
+            dayTotal.total += result.scenariosTotal || 0;
+        });
+
+        passedTotal.value.push(dayTotal.passed);
+        failedTotal.value.push(dayTotal.failed);
+        skippedTotal.value.push(dayTotal.skipped);
+        pendingTotal.value.push(dayTotal.pending);
+        undefinedTotal.value.push(dayTotal.undefined);
+        ambiguousTotal.value.push(dayTotal.ambiguous);
+        scenariosTotal.value.push(dayTotal.total);
+        dataLabels.value.push(new Date(dayData.date).getDate());
+    });
+};
+
+       
+        const calculateTotals = (featureData: DataTableItem[]) => {
+            featureData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            passedTotal.value = featureData.map(item => item.result.scenariosPassed || 0);
+            failedTotal.value = featureData.map(item => item.result.scenariosFailed || 0);
+            skippedTotal.value = featureData.map(item => item.result.scenariosSkipped || 0);
+            pendingTotal.value = featureData.map(item => item.result.scenariosPending || 0);
+            undefinedTotal.value = featureData.map(item => item.result.scenariosUndefined || 0);
+            ambiguousTotal.value = featureData.map(item => item.result.scenariosAmbiguous || 0);
+            scenariosTotal.value = featureData.map(item => item.result.scenariosTotal || 0);
+            dataLabels.value = featureData.map(item => new Date(item.date).getDate());
         };
 
         watch([selectedMonth, selectedFeature], async ([month, feature]) => {
             if (month && feature) {
-                fetchData(month.code, feature);
+                await fetchFeatureNames(month.code);
+                await fetchData(feature);
+            }
+        });
+        watch(selectedFeature, async (newFeature) => {
+            if (selectedMonth.value && newFeature) {
+                await fetchData(newFeature);
             }
         });
 
         onMounted(() => {
-            fetchFeatureNames();
-        });
-
-        const fetchData = async (month: string, feature: FeatureProps) => {
-            try {
-                const startDate = `${new Date().getFullYear()}-${month}-01`;
-                const endDate = `${new Date().getFullYear()}-${month}-31`;
-                let featureData;
-                if (props.path) {
-                    if (feature.name === "Todos") {
-                        featureData = await getFeatures({
-                            project: props.path,
-                            execID: ""
-                        });
-                    } else {
-                        featureData = await getByFeatureAndDate({
-                            project: props.path,
-                            dashboardName: feature.name,
-                            startDate,
-                            endDate
-                        });
-                    }
-                }
-                calculateTotals(featureData);
-            } catch (error) {
-                console.error("Erro ao buscar dados do dashboard:", error);
-            }
-        };
-
-        const calculateTotals = (featureData: DataTableItem[]) => {
-            passedTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosPassed || 0), 0);
-            failedTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosFailed || 0), 0);
-            skippedTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosSkipped || 0), 0);
-            pendingTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosPending || 0), 0);
-            undefinedTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosUndefined || 0), 0);
-            ambiguousTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosAmbiguous || 0), 0);
-            scenariosTotal.value = featureData.reduce((total, item) => total + (item.result.scenariosTotal || 0), 0);
-        };
-
-        const dataLabels = computed(() => {
-            return props.dataTable.map(data => new Date(data.date).getDate().toString().padStart(2, '0'));
+            fetchData(selectedFeature);
         });
 
         return {
@@ -154,4 +221,5 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>

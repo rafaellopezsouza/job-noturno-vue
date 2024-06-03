@@ -1,10 +1,8 @@
 <template>
-    <div class="annual">
+    <div>
         <div class="filter-options">
-            <Dropdown id="select-year" v-model="selectedYear" :options="selectYear" optionLabel="year"
-                placeholder="Selecione o ano" />
-            <Dropdown id="select-Feature" v-model="selectedFeature" :options="selectFeature" optionLabel="name"
-                placeholder="Selecione uma Funcionalidade" />
+            <Dropdown class="dropdown-select-date" id="select-year" v-model="selectedYear" :options="selectYear" optionLabel="year" placeholder="Selecione o ano" />
+            <Dropdown class="dropdown-select-options" id="select-Feature" v-model="selectedFeature" :options="selectFeature" optionLabel="name" placeholder="Selecione uma Funcionalidade" />
         </div>
         <hr>
         <div class="chart-line" v-if="scenariosTotal > 0">
@@ -21,6 +19,8 @@ import Dropdown from 'primevue/dropdown';
 import ChartLine from "../ChartLine.vue";
 import { months, years } from "../../assets/data";
 import { getFeatures, getByFeatureAndDate } from '../../services/api';
+import { dashboardName } from '../../assets/data';
+
 
 interface YearProps {
     year: string;
@@ -51,14 +51,16 @@ export default defineComponent({
     },
     props: {
         path: String,
-        dataTable: {
-            type: Array as () => DataTableItem[],
-            required: true
-        },
     },
     setup(props) {
-        const selectedYear = ref<YearProps | null>(null);
-        const selectedFeature = ref<FeatureProps | null>(null);
+        const getCurrentYear = (): YearProps => {
+            const currentDate = new Date();
+            const currentYearCode = currentDate.getFullYear().toString();
+            return years.find(year => year.year === currentYearCode) as YearProps;
+        }
+
+        const selectedYear = ref<YearProps>(getCurrentYear());
+        const selectedFeature = ref<FeatureProps>({name: "Todos"});
         const selectYear = ref<YearProps[]>([]);
         const selectFeature = ref<FeatureProps[]>([]);
 
@@ -69,16 +71,39 @@ export default defineComponent({
         const undefinedTotal = ref<number>(0);
         const ambiguousTotal = ref<number>(0);
         const scenariosTotal = ref<number>(0);
+        let dataResult: DataTableItem[] = [];
+
 
         const fetchYears = () => {
-            selectYear.value = years.map(year => ({ year }));
+            selectYear.value = years.map(year => ({ year: year.year }));
         };
 
-        const fetchFeatureNames = async () => {
-            if (props.path !== undefined) {
-                const featureData = await getFeatures({ project: props.path, execID: "" });
-                const dataFromAPI = featureData.map((name: string) => ({ name }));
-                selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
+        const fetchFeatureNames = async (year: string) => {
+            try {
+                const startDate = `${year}-01-01`;
+                const endDate = `${year}-12-31`;
+
+                const dataResult = await getByFeatureAndDate({
+                    project: props.path,
+                    dashboardName: dashboardName[0],
+                    startDate,
+                    endDate
+                });
+
+                const execID = dataResult[0]?.execID;
+
+                if (execID) {
+                    const featuresResult = await getFeatures({
+                        project: props.path,
+                        execID
+                    });
+
+                    const dataFromAPI = featuresResult.map((item: any) => ({ name: item.name }));
+                    selectFeature.value = [{ name: "Todos" }, ...dataFromAPI];
+                }
+            } catch (error) {
+                console.error("Erro ao buscar nomes de funcionalidades:", error);
+                selectFeature.value = [{ name: "Nenhum valor encontrado" }];
             }
         };
 
@@ -87,24 +112,21 @@ export default defineComponent({
                 const startDate = `${year}-01-01`;
                 const endDate = `${year}-12-31`;
                 let featureData;
-                if (props.path) {
-                    if (feature.name === "Todos") {
-                        featureData = await getFeatures({
-                            project: props.path,
-                            execID: "",
-                        })
-                    } else {
-                        featureData = await getByFeatureAndDate({
-                            project: props.path,
-                            dashboardName: feature.name,
-                            startDate,
-                            endDate
-                        });
-                    }
+
+                if (feature.name === "Todos") {
+                    featureData = await getByFeatureAndDate({
+                        project: props.path,
+                        dashboardName: dashboardName[0],
+                        startDate,
+                        endDate
+                    });
+                } else {
+                    featureData = dataResult.filter(item => item.date.startsWith(`${year}`));
                 }
+
                 calculateTotals(featureData);
             } catch (error) {
-                console.error("Erro ao buscar dados do feature:", error);
+                console.error("Erro ao buscar dados:", error);
             }
         };
 
@@ -124,7 +146,7 @@ export default defineComponent({
 
         onMounted(() => {
             fetchYears();
-            fetchFeatureNames();
+            fetchFeatureNames(selectedYear.value.year);
         });
 
         watch([selectedYear, selectedFeature], async ([year, feature]) => {
@@ -151,4 +173,5 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>
